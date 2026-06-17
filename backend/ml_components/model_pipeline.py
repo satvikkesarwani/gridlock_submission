@@ -5,6 +5,7 @@ from lightgbm import LGBMRegressor
 from sklearn.neural_network import MLPRegressor
 from sklearn.linear_model import Ridge
 from sklearn.ensemble import StackingRegressor
+from sklearn.compose import TransformedTargetRegressor
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 import pickle
@@ -17,9 +18,10 @@ class TrafficImpactModel:
             ('lgbm', LGBMRegressor(n_estimators=100, learning_rate=0.05, max_depth=4, random_state=42, verbose=-1)),
             ('mlp', MLPRegressor(hidden_layer_sizes=(64, 32), max_iter=500, random_state=42))
         ]
-        self.model = StackingRegressor(estimators=estimators, final_estimator=Ridge())
+        base_ensemble = StackingRegressor(estimators=estimators, final_estimator=Ridge(), passthrough=True)
+        self.model = TransformedTargetRegressor(regressor=base_ensemble, func=np.log1p, inverse_func=np.expm1)
         self.label_encoders = {}
-        self.features = ['event_cause', 'priority', 'hour_of_day', 'is_weekend', 'requires_road_closure', 'day_of_week', 'month', 'is_rush_hour']
+        self.features = ['event_cause', 'priority', 'is_weekend', 'requires_road_closure', 'is_rush_hour', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos']
         self.model_path = os.path.join(os.path.dirname(__file__), 'impact_model.pkl')
         self.encoders_path = os.path.join(os.path.dirname(__file__), 'encoders.pkl')
 
@@ -40,11 +42,18 @@ class TrafficImpactModel:
         df = df[(df['duration_mins'] > 0) & (df['duration_mins'] < 60*24)] 
         
         # Feature engineering
-        df['hour_of_day'] = df['start_datetime'].dt.hour
-        df['day_of_week'] = df['start_datetime'].dt.dayofweek
-        df['month'] = df['start_datetime'].dt.month
-        df['is_weekend'] = (df['day_of_week'] >= 5).astype(int)
-        df['is_rush_hour'] = df['hour_of_day'].isin([8, 9, 10, 17, 18, 19]).astype(int)
+        hour_of_day = df['start_datetime'].dt.hour
+        month = df['start_datetime'].dt.month
+        day_of_week = df['start_datetime'].dt.dayofweek
+        
+        # Cyclical Time Encoding
+        df['hour_sin'] = np.sin(2 * np.pi * hour_of_day / 24.0)
+        df['hour_cos'] = np.cos(2 * np.pi * hour_of_day / 24.0)
+        df['month_sin'] = np.sin(2 * np.pi * month / 12.0)
+        df['month_cos'] = np.cos(2 * np.pi * month / 12.0)
+        
+        df['is_weekend'] = (day_of_week >= 5).astype(int)
+        df['is_rush_hour'] = hour_of_day.isin([8, 9, 10, 17, 18, 19]).astype(int)
         df['requires_road_closure'] = df['requires_road_closure'].fillna(False).astype(int)
         
         df['event_cause'] = df['event_cause'].fillna('unknown')
@@ -103,10 +112,13 @@ class TrafficImpactModel:
         
         # Derive advanced features to match trained model
         is_rush_hour = int(hour_of_day in [8, 9, 10, 17, 18, 19])
-        day_of_week = 5 if is_weekend else 2 # Sat or Wed
+        hour_sin = np.sin(2 * np.pi * hour_of_day / 24.0)
+        hour_cos = np.cos(2 * np.pi * hour_of_day / 24.0)
         month = 6 # Default June
+        month_sin = np.sin(2 * np.pi * month / 12.0)
+        month_cos = np.cos(2 * np.pi * month / 12.0)
         
-        X_pred = np.array([[encoded_cause, encoded_priority, hour_of_day, int(is_weekend), int(requires_road_closure), day_of_week, month, is_rush_hour]])
+        X_pred = np.array([[encoded_cause, encoded_priority, int(is_weekend), int(requires_road_closure), is_rush_hour, hour_sin, hour_cos, month_sin, month_cos]])
         prediction = self.model.predict(X_pred)[0]
         return round(prediction, 1)
 
