@@ -1,0 +1,13 @@
+# Ignore large external datasets
+dataset/dataset1_nyc/*.csv
+dataset/dataset2_chicago/*.csv
+dataset/dataset3_maryland/*.csv
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.env
+
+# Models
+backend/ml_components/*.pkl
