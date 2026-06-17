@@ -146,7 +146,8 @@ class ResourceOptimizer:
 
 if __name__ == "__main__":
     # Test script: Train model if run directly
-    dataset_path = os.path.join(os.path.dirname(__file__), '../../dataset/Astram event data_anonymized - Astram event data_anonymizedb40ac87 (1).csv')
+    # Use the large harmonized dataset for higher accuracy
+    dataset_path = os.path.join(os.path.dirname(__file__), '../../dataset/harmonized_master.csv')
     if os.path.exists(dataset_path):
         model = TrafficImpactModel()
         model.train(dataset_path)
