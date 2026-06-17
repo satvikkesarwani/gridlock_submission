@@ -1,5 +1,6 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
+import asyncio
 from pydantic import BaseModel
 from typing import Optional
 import os
@@ -113,6 +114,33 @@ def get_debrief():
             {"label": "Incident Location", "value": 0.05},
         ]
     }
+
+@app.websocket("/api/ws/live-status")
+async def websocket_live_status(websocket: WebSocket):
+    await websocket.accept()
+    import random
+    try:
+        while True:
+            # Simulate real-time fluctuating data
+            data = {
+                "travel_time_index": round(random.uniform(1.8, 2.5), 1),
+                "avg_speed": random.randint(10, 20),
+                "active_incidents": random.randint(1, 3),
+                "dms_status": "Broadcasting",
+                "dispatch_time": f"{random.randint(5, 12)} min",
+                "estimated_clearance": f"{random.randint(20, 45)} min",
+                "clearance_forecast": [
+                    {"time": "10:00", "congestion": random.randint(80, 95)},
+                    {"time": "10:30", "congestion": random.randint(65, 75)},
+                    {"time": "11:00", "congestion": random.randint(35, 45)},
+                    {"time": "11:30", "congestion": random.randint(10, 20)},
+                    {"time": "12:00", "congestion": random.randint(0, 5)},
+                ]
+            }
+            await websocket.send_json(data)
+            await asyncio.sleep(2) # Send update every 2 seconds
+    except Exception as e:
+        print("WebSocket disconnected:", e)
 
 if __name__ == "__main__":
     import uvicorn

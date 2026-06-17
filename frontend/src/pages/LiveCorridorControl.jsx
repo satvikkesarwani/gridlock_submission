@@ -25,7 +25,7 @@ import ActionButton from "../components/ActionButton.jsx";
 import AppHeader from "../components/AppHeader.jsx";
 import Card from "../components/Card.jsx";
 import MetricCard from "../components/MetricCard.jsx";
-import { LiveCorridorMap } from "../components/MockMap.jsx";
+import InteractiveMap from "../components/InteractiveMap.jsx";
 import Pill from "../components/Pill.jsx";
 import { clearanceForecast as initialForecast, liveMetrics as initialMetrics } from "../data/mockData.js";
 
@@ -40,11 +40,12 @@ export default function LiveCorridorControl() {
   });
 
   useEffect(() => {
-    const fetchStatus = async () => {
+    // Connect to WebSocket
+    const ws = new WebSocket("ws://127.0.0.1:8000/api/ws/live-status");
+    
+    ws.onmessage = (event) => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/api/live-status");
-        const data = await res.json();
-        
+        const data = JSON.parse(event.data);
         setLiveData({
           metrics: [
             { label: "Travel Time Index", value: String(data.travel_time_index), tone: data.travel_time_index > 2 ? "red" : "amber" },
@@ -58,13 +59,11 @@ export default function LiveCorridorControl() {
           estimatedClearance: data.estimated_clearance
         });
       } catch (err) {
-        console.error("Failed to fetch live status:", err);
+        console.error("Error parsing WS message:", err);
       }
     };
-    
-    fetchStatus();
-    const interval = setInterval(fetchStatus, 5000);
-    return () => clearInterval(interval);
+
+    return () => ws.close();
   }, []);
 
   return (
@@ -74,7 +73,7 @@ export default function LiveCorridorControl() {
       <Card className="alert-card">
         <header className="alert-header">
           <h2><Siren size={24} />Active Incident Alert</h2>
-          <span>Live Now</span>
+          <span className="live-badge">Live WS</span>
         </header>
         <div className="incident-grid">
           <InfoLine icon={<Siren size={23} />} label="Alert" value="Segment 14 Jam" tone="red" />
@@ -92,7 +91,7 @@ export default function LiveCorridorControl() {
       </Card>
 
       <Card title="Real-Time GIS Corridor Monitoring" action={<Info size={21} />}>
-        <LiveCorridorMap />
+        <InteractiveMap />
         <div className="filter-row">
           <Pill active>Speed Layers</Pill>
           <Pill active>CCTV</Pill>
