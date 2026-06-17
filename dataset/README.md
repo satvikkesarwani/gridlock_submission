@@ -23,7 +23,7 @@ The following datasets are configured for download:
    - **Link**: `https://opendata.maryland.gov/resource/65du-s3qu.csv?$limit=10000`
    - **Purpose**: Provides data on highway and suburban incidents.
 
-## How to Download
+## How to Download and Harmonize
 To avoid bloating the GitHub repository, the raw `.csv` files are **not** committed to version control. 
 
 To download them locally to your machine, run the provided python script from the root of the project:
@@ -32,3 +32,9 @@ python dataset/download_datasets.py
 ```
 
 This will create `dataset1_nyc`, `dataset2_chicago`, and `dataset3_maryland` folders and download a 10,000-row sample of each dataset into them.
+
+Once downloaded, you MUST harmonize them into the main ML pipeline schema (`start_datetime`, `closed_datetime`, `event_cause`, `priority`, `requires_road_closure`). Run the harmonization script:
+```bash
+python dataset/harmonize_data.py
+```
+This will generate `dataset/harmonized_master.csv` containing 20,000 perfectly formatted rows ready for fine-tuning the model!
