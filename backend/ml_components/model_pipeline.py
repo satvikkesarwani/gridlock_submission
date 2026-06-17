@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from sklearn.ensemble import RandomForestRegressor
+from xgboost import XGBRegressor
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 import pickle
@@ -8,7 +8,7 @@ import os
 
 class TrafficImpactModel:
     def __init__(self):
-        self.model = RandomForestRegressor(n_estimators=50, random_state=42)
+        self.model = XGBRegressor(n_estimators=100, learning_rate=0.1, max_depth=5, random_state=42)
         self.label_encoders = {}
         self.features = ['event_cause', 'priority', 'hour_of_day', 'is_weekend', 'requires_road_closure']
         self.model_path = os.path.join(os.path.dirname(__file__), 'impact_model.pkl')

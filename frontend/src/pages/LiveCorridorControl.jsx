@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   AlarmClock,
   BellRing,
@@ -26,12 +27,45 @@ import Card from "../components/Card.jsx";
 import MetricCard from "../components/MetricCard.jsx";
 import { LiveCorridorMap } from "../components/MockMap.jsx";
 import Pill from "../components/Pill.jsx";
-import { clearanceForecast, liveMetrics } from "../data/mockData.js";
+import { clearanceForecast as initialForecast, liveMetrics as initialMetrics } from "../data/mockData.js";
 
 const metricIcons = [Gauge, Gauge, Siren, RadioTower, AlarmClock, Clock];
 
 export default function LiveCorridorControl() {
   const navigate = useNavigate();
+  const [liveData, setLiveData] = useState({
+    metrics: initialMetrics,
+    forecast: initialForecast,
+    estimatedClearance: "35 min"
+  });
+
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const res = await fetch("http://127.0.0.1:8000/api/live-status");
+        const data = await res.json();
+        
+        setLiveData({
+          metrics: [
+            { label: "Travel Time Index", value: String(data.travel_time_index), tone: data.travel_time_index > 2 ? "red" : "amber" },
+            { label: "Avg Corridor Speed", value: `${data.avg_speed} km/h`, tone: data.avg_speed < 15 ? "red" : "amber" },
+            { label: "Active Incidents", value: String(data.active_incidents), tone: "red" },
+            { label: "DMS Status", value: data.dms_status, tone: "green" },
+            { label: "Responder Dispatch Time", value: data.dispatch_time, tone: "green" },
+            { label: "Estimated Clearance Time", value: data.estimated_clearance, tone: "red" },
+          ],
+          forecast: data.clearance_forecast,
+          estimatedClearance: data.estimated_clearance
+        });
+      } catch (err) {
+        console.error("Failed to fetch live status:", err);
+      }
+    };
+    
+    fetchStatus();
+    const interval = setInterval(fetchStatus, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="page">
@@ -46,7 +80,7 @@ export default function LiveCorridorControl() {
           <InfoLine icon={<Siren size={23} />} label="Alert" value="Segment 14 Jam" tone="red" />
           <InfoLine icon={<MapPin size={23} />} label="Location" value="Whitefield Road / ITI Data Center" />
           <InfoLine icon={<BellRing size={23} />} label="ID" value="FKID000010" />
-          <InfoLine icon={<Clock size={23} />} label="Est. Clear Time" value="35 min" />
+          <InfoLine icon={<Clock size={23} />} label="Est. Clear Time" value={liveData.estimatedClearance} />
           <InfoLine icon={<Droplets size={23} />} label="Type" value="Waterlogging" tone="blue" />
           <InfoLine icon={<Users size={23} />} label="Status" value="Responder Dispatched" tone="green" />
         </div>
@@ -68,7 +102,7 @@ export default function LiveCorridorControl() {
 
       <Card title="Dynamic Corridor Metrics">
         <section className="live-metric-grid">
-          {liveMetrics.map((metric, index) => {
+          {liveData.metrics.map((metric, index) => {
             const Icon = metricIcons[index];
             return <MetricCard key={metric.label} icon={<Icon size={22} />} label={metric.label} value={metric.value} tone={metric.tone} />;
           })}
@@ -79,12 +113,12 @@ export default function LiveCorridorControl() {
         <div className="clearance-layout">
           <div className="clearance-number">
             <small>Estimated Clearance</small>
-            <strong>35 <span>min</span></strong>
+            <strong>{liveData.estimatedClearance.split(" ")[0]} <span>min</span></strong>
             <em>Confidence 78%</em>
           </div>
           <div className="clearance-chart">
             <ResponsiveContainer width="100%" height={150}>
-              <AreaChart data={clearanceForecast} margin={{ top: 8, right: 4, left: -20, bottom: 0 }}>
+              <AreaChart data={liveData.forecast} margin={{ top: 8, right: 4, left: -20, bottom: 0 }}>
                 <CartesianGrid stroke="#edf2f6" vertical={false} />
                 <XAxis dataKey="time" tick={{ fill: "#20304a", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "#cbd5e1" }} />
                 <YAxis tick={{ fill: "#20304a", fontSize: 11 }} tickLine={false} axisLine={false} tickFormatter={(value) => (value > 66 ? "High" : value > 33 ? "Med" : "Low")} />
@@ -97,7 +131,7 @@ export default function LiveCorridorControl() {
         </div>
       </Card>
 
-      <ActionButton onClick={() => navigate("/debrief")}>Proceed to Post-Event Debriefing</ActionButton>
+      <ActionButton className="primary" onClick={() => navigate("/debrief")}>Proceed to Post-Event Debriefing</ActionButton>
     </div>
   );
 }
