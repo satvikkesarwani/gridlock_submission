@@ -1,14 +1,23 @@
 import pandas as pd
 import numpy as np
 from xgboost import XGBRegressor
+from lightgbm import LGBMRegressor
+from sklearn.neural_network import MLPRegressor
+from sklearn.linear_model import Ridge
+from sklearn.ensemble import StackingRegressor
 from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.model_selection import train_test_split
 import pickle
 import os
 
 class TrafficImpactModel:
     def __init__(self):
-        self.model = XGBRegressor(n_estimators=100, learning_rate=0.1, max_depth=5, random_state=42)
+        estimators = [
+            ('xgb', XGBRegressor(n_estimators=100, learning_rate=0.05, max_depth=4, random_state=42)),
+            ('lgbm', LGBMRegressor(n_estimators=100, learning_rate=0.05, max_depth=4, random_state=42, verbose=-1)),
+            ('mlp', MLPRegressor(hidden_layer_sizes=(64, 32), max_iter=500, random_state=42))
+        ]
+        self.model = StackingRegressor(estimators=estimators, final_estimator=Ridge())
         self.label_encoders = {}
         self.features = ['event_cause', 'priority', 'hour_of_day', 'is_weekend', 'requires_road_closure', 'day_of_week', 'month', 'is_rush_hour']
         self.model_path = os.path.join(os.path.dirname(__file__), 'impact_model.pkl')
@@ -59,27 +68,13 @@ class TrafficImpactModel:
             X[col] = le.fit_transform(X[col].astype(str))
             self.label_encoders[col] = le
             
-        print("Tuning hyperparameters with GridSearchCV...")
+        print("Training Stacked Ensemble Model (XGBoost + LightGBM + MLP)...")
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
         
-        param_grid = {
-            'max_depth': [4, 6, 8],
-            'learning_rate': [0.05, 0.1, 0.2],
-            'n_estimators': [100, 200]
-        }
-        grid_search = GridSearchCV(estimator=XGBRegressor(random_state=42), 
-                                   param_grid=param_grid, 
-                                   cv=3, 
-                                   scoring='r2', 
-                                   n_jobs=-1,
-                                   verbose=1)
-        grid_search.fit(X_train, y_train)
-        
-        print(f"Best parameters found: {grid_search.best_params_}")
-        self.model = grid_search.best_estimator_
+        self.model.fit(X_train, y_train)
         
         score = self.model.score(X_test, y_test)
-        print(f"Model R^2 Score (Tuned): {score:.2f}")
+        print(f"Ensemble Model R^2 Score: {score:.2f}")
         
         # Save model and encoders
         with open(self.model_path, 'wb') as f:
