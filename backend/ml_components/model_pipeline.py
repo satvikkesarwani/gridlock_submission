@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from xgboost import XGBRegressor
 from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 import pickle
 import os
 
@@ -10,7 +10,7 @@ class TrafficImpactModel:
     def __init__(self):
         self.model = XGBRegressor(n_estimators=100, learning_rate=0.1, max_depth=5, random_state=42)
         self.label_encoders = {}
-        self.features = ['event_cause', 'priority', 'hour_of_day', 'is_weekend', 'requires_road_closure']
+        self.features = ['event_cause', 'priority', 'hour_of_day', 'is_weekend', 'requires_road_closure', 'day_of_week', 'month', 'is_rush_hour']
         self.model_path = os.path.join(os.path.dirname(__file__), 'impact_model.pkl')
         self.encoders_path = os.path.join(os.path.dirname(__file__), 'encoders.pkl')
 
@@ -32,7 +32,10 @@ class TrafficImpactModel:
         
         # Feature engineering
         df['hour_of_day'] = df['start_datetime'].dt.hour
-        df['is_weekend'] = df['start_datetime'].dt.dayofweek >= 5
+        df['day_of_week'] = df['start_datetime'].dt.dayofweek
+        df['month'] = df['start_datetime'].dt.month
+        df['is_weekend'] = (df['day_of_week'] >= 5).astype(int)
+        df['is_rush_hour'] = df['hour_of_day'].isin([8, 9, 10, 17, 18, 19]).astype(int)
         df['requires_road_closure'] = df['requires_road_closure'].fillna(False).astype(int)
         
         df['event_cause'] = df['event_cause'].fillna('unknown')
@@ -56,12 +59,27 @@ class TrafficImpactModel:
             X[col] = le.fit_transform(X[col].astype(str))
             self.label_encoders[col] = le
             
-        print("Training model...")
+        print("Tuning hyperparameters with GridSearchCV...")
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-        self.model.fit(X_train, y_train)
+        
+        param_grid = {
+            'max_depth': [4, 6, 8],
+            'learning_rate': [0.05, 0.1, 0.2],
+            'n_estimators': [100, 200]
+        }
+        grid_search = GridSearchCV(estimator=XGBRegressor(random_state=42), 
+                                   param_grid=param_grid, 
+                                   cv=3, 
+                                   scoring='r2', 
+                                   n_jobs=-1,
+                                   verbose=1)
+        grid_search.fit(X_train, y_train)
+        
+        print(f"Best parameters found: {grid_search.best_params_}")
+        self.model = grid_search.best_estimator_
         
         score = self.model.score(X_test, y_test)
-        print(f"Model R^2 Score: {score:.2f}")
+        print(f"Model R^2 Score (Tuned): {score:.2f}")
         
         # Save model and encoders
         with open(self.model_path, 'wb') as f:
@@ -88,7 +106,12 @@ class TrafficImpactModel:
         encoded_cause = self.label_encoders['event_cause'].transform([event_cause])[0] if event_cause in self.label_encoders['event_cause'].classes_ else 0
         encoded_priority = self.label_encoders['priority'].transform([priority])[0] if priority in self.label_encoders['priority'].classes_ else 0
         
-        X_pred = np.array([[encoded_cause, encoded_priority, hour_of_day, int(is_weekend), int(requires_road_closure)]])
+        # Derive advanced features to match trained model
+        is_rush_hour = int(hour_of_day in [8, 9, 10, 17, 18, 19])
+        day_of_week = 5 if is_weekend else 2 # Sat or Wed
+        month = 6 # Default June
+        
+        X_pred = np.array([[encoded_cause, encoded_priority, hour_of_day, int(is_weekend), int(requires_road_closure), day_of_week, month, is_rush_hour]])
         prediction = self.model.predict(X_pred)[0]
         return round(prediction, 1)
 
