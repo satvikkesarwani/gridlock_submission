@@ -12,3 +12,8 @@ venv/
 
 # Models
 backend/ml_components/*.pkl
+
+# Node
+node_modules/
+dist/
+.DS_Store
