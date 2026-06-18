@@ -3,6 +3,7 @@ dataset/dataset1_nyc/*.csv
 dataset/dataset2_chicago/*.csv
 dataset/dataset3_maryland/*.csv
 dataset/harmonized_*.csv
+dataset/weather_cache.csv
 
 # Python
 __pycache__/

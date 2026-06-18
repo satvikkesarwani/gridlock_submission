@@ -673,6 +673,21 @@ button {
   line-height: 1.1;
 }
 
+.kpi-grid.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.kpi-grid.three .metric-card strong {
+  font-size: 18px;
+  line-height: 1.1;
+}
+
+.card-subtext {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
 .chart-card {
   padding-bottom: 11px;
 }
