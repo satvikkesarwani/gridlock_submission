@@ -26,6 +26,7 @@ import AppHeader from "../components/AppHeader.jsx";
 import Card from "../components/Card.jsx";
 import MetricCard from "../components/MetricCard.jsx";
 import InteractiveMap from "../components/InteractiveMap.jsx";
+import { WS_BASE_URL } from "../config/api.js";
 import Pill from "../components/Pill.jsx";
 import { clearanceForecast as initialForecast, liveMetrics as initialMetrics } from "../data/mockData.js";
 
@@ -38,13 +39,19 @@ export default function LiveCorridorControl() {
     forecast: initialForecast,
     estimatedClearance: "35 min"
   });
+  const [connectionError, setConnectionError] = useState("");
 
   useEffect(() => {
     // Connect to WebSocket
-    const ws = new WebSocket("ws://127.0.0.1:8000/api/ws/live-status");
+    const ws = new WebSocket(`${WS_BASE_URL}/api/ws/live-status`);
+
+    ws.onopen = () => setConnectionError("");
+    ws.onerror = () => setConnectionError("Live feed unavailable. Showing last known metrics.");
+    ws.onclose = () => setConnectionError((current) => current || "Live feed disconnected.");
     
     ws.onmessage = (event) => {
       try {
+        setConnectionError("");
         const data = JSON.parse(event.data);
         setLiveData({
           metrics: [
@@ -60,6 +67,7 @@ export default function LiveCorridorControl() {
         });
       } catch (err) {
         console.error("Error parsing WS message:", err);
+        setConnectionError("Live feed returned malformed data.");
       }
     };
 
@@ -88,6 +96,7 @@ export default function LiveCorridorControl() {
           <Pill>Override Signal 12</Pill>
           <Pill><RadioTower size={15} />Broadcast DMS Alert</Pill>
         </div>
+        {connectionError && <p className="error-banner">{connectionError}</p>}
       </Card>
 
       <Card title="Real-Time GIS Corridor Monitoring" action={<Info size={21} />}>

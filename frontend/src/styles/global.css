@@ -39,6 +39,19 @@ button {
   font: inherit;
 }
 
+.error-banner {
+  width: 100%;
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.14);
+  color: #fecaca;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
 .desktop-stage {
   min-height: 100vh;
   display: flex;

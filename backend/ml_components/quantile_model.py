@@ -102,9 +102,9 @@ class ClearanceRangeModel:
         # Quantile models are trained independently, so enforce P10 <= P50 <= P90.
         p10, p50, p90 = np.sort([preds['p10'], preds['p50'], preds['p90']])
         return {
-            'expected_clearance_mins': round(p50, 1),
-            'optimistic_p10_mins': round(max(p10, 0), 1),
-            'pessimistic_p90_mins': round(p90, 1),
+            'expected_clearance_mins': float(round(p50, 1)),
+            'optimistic_p10_mins': float(round(max(p10, 0), 1)),
+            'pessimistic_p90_mins': float(round(p90, 1)),
         }
 
 

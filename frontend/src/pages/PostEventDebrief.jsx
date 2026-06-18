@@ -7,6 +7,7 @@ import Card from "../components/Card.jsx";
 import HorizontalBarChart from "../components/HorizontalBarChart.jsx";
 import MetricCard from "../components/MetricCard.jsx";
 import MiniLineChart from "../components/MiniLineChart.jsx";
+import { API_BASE_URL } from "../config/api.js";
 import { event, insights, planVsActual as initialPVA, shapImportance as initialSHAP, varianceMetrics as initialVM } from "../data/mockData.js";
 
 const varianceIcons = [Clock, TrendingUp, Workflow, SlidersHorizontal];
@@ -22,11 +23,16 @@ export default function PostEventDebrief() {
     varianceMetrics: initialVM,
     shapImportance: initialSHAP
   });
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchDebrief = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/api/debrief");
+        setError("");
+        const res = await fetch(`${API_BASE_URL}/api/debrief`);
+        if (!res.ok) {
+          throw new Error(`Request failed with ${res.status}`);
+        }
         const data = await res.json();
         
         setDebriefData({
@@ -40,6 +46,7 @@ export default function PostEventDebrief() {
         });
       } catch (err) {
         console.error("Failed to fetch debrief data:", err);
+        setError("Debrief data unavailable. Showing cached event baseline.");
       }
     };
     
@@ -74,6 +81,7 @@ export default function PostEventDebrief() {
           <MetricCard icon={<Car size={24} />} label="Delay Hours" value={debriefData.delayHours} />
         </section>
         <ActionButton variant="secondary" icon={<SlidersHorizontal size={20} />}>Calibrate DUA Model</ActionButton>
+        {error && <p className="error-banner">{error}</p>}
       </Card>
 
       <MiniLineChart

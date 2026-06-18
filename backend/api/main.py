@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 import os
 import sys
@@ -35,7 +35,7 @@ if not clearance_range_model.load():
 class SimulationRequest(BaseModel):
     event_cause: str
     priority: str
-    hour_of_day: int
+    hour_of_day: int = Field(..., ge=0, le=23)
     is_weekend: bool
     requires_road_closure: bool
     attendance: Optional[str] = None

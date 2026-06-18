@@ -7,6 +7,7 @@ import Card from "../components/Card.jsx";
 import MetricCard from "../components/MetricCard.jsx";
 import MiniLineChart from "../components/MiniLineChart.jsx";
 import { CongestionMap } from "../components/MockMap.jsx";
+import { API_BASE_URL } from "../config/api.js";
 import Pill from "../components/Pill.jsx";
 import { event, inflowProjection } from "../data/mockData.js";
 
@@ -16,6 +17,7 @@ export default function PredictiveSimulator() {
   const navigate = useNavigate();
   const [isSimulating, setIsSimulating] = useState(false);
   const [results, setResults] = useState(null);
+  const [error, setError] = useState("");
   
   const fields = [
     ["Event Type", event.type],
@@ -26,6 +28,7 @@ export default function PredictiveSimulator() {
 
   const handleSimulate = async () => {
     setIsSimulating(true);
+    setError("");
     const payload = {
       event_cause: "public_event",
       priority: "High",
@@ -35,11 +38,17 @@ export default function PredictiveSimulator() {
       attendance: event.attendance
     };
     const post = (path) =>
-      fetch(`http://127.0.0.1:8000${path}`, {
+      fetch(`${API_BASE_URL}${path}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
-      }).then((r) => r.json());
+      }).then(async (r) => {
+        const data = await r.json();
+        if (!r.ok) {
+          throw new Error(data.detail || `Request failed with ${r.status}`);
+        }
+        return data;
+      });
 
     try {
       // Point estimate + clearance-time range, fetched together.
@@ -52,6 +61,7 @@ export default function PredictiveSimulator() {
       localStorage.setItem("event_resources", JSON.stringify(data.resources));
     } catch (error) {
       console.error("Simulation failed:", error);
+      setError("Simulation failed. Check backend availability and try again.");
     } finally {
       setIsSimulating(false);
     }
@@ -88,6 +98,7 @@ export default function PredictiveSimulator() {
         >
           {isSimulating ? "Simulating..." : "Run Traffic Simulation"}
         </ActionButton>
+        {error && <p className="error-banner">{error}</p>}
       </Card>
 
       {results && (
