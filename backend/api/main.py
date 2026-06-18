@@ -9,6 +9,7 @@ import sys
 # Add ml_components to path so we can import
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from ml_components.model_pipeline import TrafficImpactModel, ResourceOptimizer
+from ml_components.quantile_model import ClearanceRangeModel
 
 app = FastAPI(title="EventFlow AI Backend")
 
@@ -25,6 +26,11 @@ impact_model = TrafficImpactModel()
 # Attempt to load model on startup
 if not impact_model.load():
     print("Warning: ML model not found. Predictions will fail until trained.")
+
+# Quantile model: returns a clearance-time RANGE (P10/P50/P90), not a single number.
+clearance_range_model = ClearanceRangeModel()
+if not clearance_range_model.load():
+    print("Warning: quantile model not found. Run ml_components/quantile_model.py to train it.")
 
 class SimulationRequest(BaseModel):
     event_cause: str
@@ -65,6 +71,24 @@ def simulate_event(req: SimulationRequest):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/clearance-risk")
+def clearance_risk(req: SimulationRequest):
+    """Predict a clearance-time RANGE for an incident: optimistic / expected /
+    pessimistic (P10 / P50 / P90 minutes). Useful for operator triage."""
+    try:
+        result = clearance_range_model.predict(
+            req.event_cause,
+            req.priority,
+            req.hour_of_day,
+            req.is_weekend,
+            req.requires_road_closure,
+        )
+        result["status"] = "success"
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.get("/api/live-status")
 def get_live_status():
