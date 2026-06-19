@@ -1,4 +1,5 @@
-from fastapi import FastAPI, HTTPException, WebSocket
+from fastapi import FastAPI, HTTPException, WebSocket, Request
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 from pydantic import BaseModel, Field
@@ -166,6 +167,28 @@ async def websocket_live_status(websocket: WebSocket):
     except Exception as e:
         print("WebSocket disconnected:", e)
 
+# --- Static Files / SPA Support for Single App Deployment ---
+frontend_dist_path = os.path.join(os.path.dirname(__file__), '..', '..', 'frontend', 'dist')
+if os.path.isdir(frontend_dist_path):
+    @app.get("/{full_path:path}")
+    async def serve_frontend(request: Request, full_path: str):
+        # Ignore API routes to let FastAPI handle 404s for them naturally if needed
+        if full_path.startswith("api/"):
+            raise HTTPException(status_code=404, detail="API route not found")
+            
+        # Serve exact file if it exists (e.g., /assets/index-*.js, /favicon.ico)
+        file_path = os.path.join(frontend_dist_path, full_path)
+        if full_path and os.path.isfile(file_path):
+            return FileResponse(file_path)
+            
+        # Fallback to index.html for React Router
+        index_path = os.path.join(frontend_dist_path, "index.html")
+        if os.path.isfile(index_path):
+            return FileResponse(index_path)
+            
+        raise HTTPException(status_code=404, detail="Frontend index.html not found")
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
