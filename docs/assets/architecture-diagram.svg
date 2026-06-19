@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">Gridlock Intelligence System Architecture</title>
+  <desc id="desc">Architecture diagram showing React frontend, FastAPI backend, API routes, WebSocket live-status flow, ML artifacts, dataset preprocessing, and dashboard response flow.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#08111f"/>
+      <stop offset="52%" stop-color="#10243b"/>
+      <stop offset="100%" stop-color="#17221f"/>
+    </linearGradient>
+    <linearGradient id="frontend" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#23b8ff"/>
+      <stop offset="100%" stop-color="#4f8cff"/>
+    </linearGradient>
+    <linearGradient id="backend" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#17d6a2"/>
+      <stop offset="100%" stop-color="#0fa774"/>
+    </linearGradient>
+    <linearGradient id="ml" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffd166"/>
+      <stop offset="100%" stop-color="#ff9f1c"/>
+    </linearGradient>
+    <linearGradient id="data" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#c084fc"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto" markerUnits="strokeWidth">
+      <path d="M 1 1 L 13 7 L 1 13 z" fill="#8bd3ff"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto" markerUnits="strokeWidth">
+      <path d="M 1 1 L 13 7 L 1 13 z" fill="#42e6b5"/>
+    </marker>
+    <marker id="arrowAmber" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto" markerUnits="strokeWidth">
+      <path d="M 1 1 L 13 7 L 1 13 z" fill="#ffd166"/>
+    </marker>
+    <style>
+      .title { font: 800 38px Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif; fill: #f8fafc; letter-spacing: 0; }
+      .subtitle { font: 500 18px Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif; fill: #b9c9d9; letter-spacing: 0; }
+      .layer { fill: rgba(255,255,255,0.05); stroke: rgba(255,255,255,0.12); stroke-width: 1.5; }
+      .card { fill: rgba(255,255,255,0.08); stroke: rgba(255,255,255,0.18); stroke-width: 1.4; filter: url(#shadow); }
+      .cardTitle { font: 800 22px Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif; fill: #ffffff; letter-spacing: 0; }
+      .cardText { font: 500 15px Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif; fill: #d6e4f0; letter-spacing: 0; }
+      .small { font: 700 13px Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif; fill: #a8bdd0; letter-spacing: 0.6px; }
+      .pillText { font: 800 13px Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif; fill: #06111d; letter-spacing: 0.3px; }
+      .arrow { fill: none; stroke: #8bd3ff; stroke-width: 3.5; marker-end: url(#arrow); }
+      .arrowGreen { fill: none; stroke: #42e6b5; stroke-width: 3.5; marker-end: url(#arrowGreen); }
+      .arrowAmber { fill: none; stroke: #ffd166; stroke-width: 3.5; marker-end: url(#arrowAmber); }
+      .dash { stroke-dasharray: 10 10; }
+    </style>
+  </defs>
+
+  <rect width="1400" height="900" rx="34" fill="url(#bg)"/>
+  <circle cx="116" cy="122" r="78" fill="#23b8ff" opacity="0.10"/>
+  <circle cx="1268" cy="760" r="140" fill="#17d6a2" opacity="0.08"/>
+  <circle cx="1110" cy="130" r="105" fill="#ffd166" opacity="0.08"/>
+
+  <text x="70" y="78" class="title">Gridlock Intelligence System Architecture</text>
+  <text x="72" y="112" class="subtitle">React dashboard + FastAPI services + ML artifacts + dataset-driven preprocessing</text>
+
+  <rect x="60" y="160" width="340" height="640" rx="26" class="layer"/>
+  <rect x="530" y="160" width="340" height="640" rx="26" class="layer"/>
+  <rect x="1000" y="160" width="340" height="640" rx="26" class="layer"/>
+
+  <text x="88" y="196" class="small">FRONTEND EXPERIENCE</text>
+  <text x="558" y="196" class="small">BACKEND API LAYER</text>
+  <text x="1028" y="196" class="small">ML + DATA LAYER</text>
+
+  <rect x="92" y="230" width="276" height="118" rx="18" class="card"/>
+  <rect x="112" y="250" width="48" height="48" rx="13" fill="url(#frontend)"/>
+  <text x="180" y="268" class="cardTitle">React + Vite</text>
+  <text x="180" y="294" class="cardText">Dashboard shell, routes,</text>
+  <text x="180" y="316" class="cardText">shared UI components</text>
+
+  <rect x="92" y="386" width="276" height="318" rx="18" class="card"/>
+  <text x="120" y="428" class="cardTitle">Dashboard Pages</text>
+  <rect x="120" y="456" width="206" height="34" rx="17" fill="#162c45" stroke="#2c5577"/>
+  <text x="140" y="478" class="cardText">Predictive Simulator</text>
+  <rect x="120" y="504" width="206" height="34" rx="17" fill="#162c45" stroke="#2c5577"/>
+  <text x="140" y="526" class="cardText">Resource Optimizer</text>
+  <rect x="120" y="552" width="206" height="34" rx="17" fill="#162c45" stroke="#2c5577"/>
+  <text x="140" y="574" class="cardText">Live Corridor Control</text>
+  <rect x="120" y="600" width="206" height="34" rx="17" fill="#162c45" stroke="#2c5577"/>
+  <text x="140" y="622" class="cardText">Post-Event Debrief</text>
+  <text x="120" y="668" class="cardText">Consumes REST + WebSocket data</text>
+
+  <rect x="562" y="230" width="276" height="146" rx="18" class="card"/>
+  <rect x="582" y="250" width="54" height="54" rx="14" fill="url(#backend)"/>
+  <text x="656" y="270" class="cardTitle">FastAPI Backend</text>
+  <text x="656" y="297" class="cardText">Validation, response shaping,</text>
+  <text x="656" y="319" class="cardText">CORS, WebSocket service</text>
+
+  <rect x="562" y="416" width="276" height="188" rx="18" class="card"/>
+  <text x="590" y="456" class="cardTitle">API Routes</text>
+  <text x="590" y="490" class="cardText">POST /api/simulate</text>
+  <text x="590" y="518" class="cardText">POST /api/clearance-risk</text>
+  <text x="590" y="546" class="cardText">GET /api/live-status</text>
+  <text x="590" y="574" class="cardText">GET /api/debrief</text>
+
+  <rect x="562" y="642" width="276" height="86" rx="18" class="card"/>
+  <text x="590" y="679" class="cardTitle">WS Live Status</text>
+  <text x="590" y="707" class="cardText">Streaming corridor metrics</text>
+
+  <rect x="1032" y="230" width="276" height="178" rx="18" class="card"/>
+  <rect x="1052" y="250" width="54" height="54" rx="14" fill="url(#ml)"/>
+  <text x="1126" y="270" class="cardTitle">Model Artifacts</text>
+  <text x="1126" y="297" class="cardText">impact_model.pkl</text>
+  <text x="1126" y="321" class="cardText">quantile_model.pkl</text>
+  <text x="1126" y="345" class="cardText">encoders.pkl</text>
+
+  <rect x="1032" y="448" width="276" height="142" rx="18" class="card"/>
+  <rect x="1052" y="468" width="54" height="54" rx="14" fill="url(#data)"/>
+  <text x="1126" y="488" class="cardTitle">Dataset Layer</text>
+  <text x="1126" y="515" class="cardText">Astram event records</text>
+  <text x="1126" y="539" class="cardText">weather cache + utilities</text>
+
+  <rect x="1032" y="630" width="276" height="98" rx="18" class="card"/>
+  <text x="1060" y="669" class="cardTitle">Preprocessing</text>
+  <text x="1060" y="697" class="cardText">Time features, encoding, validation</text>
+
+  <path class="arrow" d="M 368 290 C 452 290, 474 290, 560 290"/>
+  <text x="424" y="270" class="small">REST REQUESTS</text>
+  <path class="arrowAmber" d="M 838 488 C 914 488, 944 300, 1030 300"/>
+  <text x="874" y="378" class="small">PREDICT</text>
+  <path class="arrowAmber" d="M 838 520 C 918 520, 948 520, 1030 520"/>
+  <text x="892" y="500" class="small">FEATURE DATA</text>
+  <path class="arrowGreen" d="M 1030 680 C 944 680, 916 570, 838 570"/>
+  <text x="890" y="640" class="small">MODEL INPUTS</text>
+  <path class="arrowGreen" d="M 562 700 C 468 700, 448 650, 368 650"/>
+  <text x="414" y="728" class="small">LIVE STREAM</text>
+  <path class="arrow dash" d="M 562 350 C 470 400, 448 450, 368 472"/>
+  <text x="410" y="422" class="small">JSON RESPONSES</text>
+
+  <rect x="474" y="802" width="452" height="48" rx="24" fill="#0f2236" stroke="#244761"/>
+  <circle cx="506" cy="826" r="8" fill="#23b8ff"/>
+  <circle cx="676" cy="826" r="8" fill="#17d6a2"/>
+  <circle cx="850" cy="826" r="8" fill="#ffd166"/>
+  <text x="526" y="831" class="cardText">Dashboard UI</text>
+  <text x="696" y="831" class="cardText">API Orchestration</text>
+  <text x="870" y="831" class="cardText">ML Intelligence</text>
+</svg>
