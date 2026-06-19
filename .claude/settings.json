@@ -1,7 +1,0 @@
-{
-  "enabledPlugins": {
-    "playwright@claude-plugins-official": true,
-    "context7@claude-plugins-official": true,
-    "frontend-design@claude-code-plugins": true
-  }
-}
