@@ -1,0 +1,12 @@
+/* ============================================================================
+   Predictive Simulator — page-specific spacing
+   (inputs use controls.css, KPIs use metric-card.css, clearance uses the
+    corridor clearance-band, projection uses charts/maps)
+   ============================================================================ */
+.simulator-results {
+  display: contents; /* keep stagger on direct page children */
+}
+
+.clearance-card .card-subtext {
+  margin-top: -2px;
+}

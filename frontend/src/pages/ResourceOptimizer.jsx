@@ -7,12 +7,17 @@ import Card from "../components/Card.jsx";
 import MetricCard from "../components/MetricCard.jsx";
 import { DiversionMap } from "../components/MockMap.jsx";
 import Pill from "../components/Pill.jsx";
+import { useSimulation } from "../hooks/useSimulation.js";
+import { RESOURCES_STORAGE_KEY } from "../constants/simulation.js";
+import { ROUTES } from "../constants/routes.js";
 import { rosterRows } from "../data/mockData.js";
 
 const metricIcons = [ShieldAlert, Wallet, Users, User, Construction];
+const planLayers = ["Barricades", "Signal Control", "Patrol Routes"];
 
 export default function ResourceOptimizer() {
   const navigate = useNavigate();
+  const { isLoading: isOptimizing, error, runOptimization } = useSimulation();
   const [resources, setResources] = useState({
     sworn_staff: 28,
     volunteers: 12,
@@ -21,9 +26,17 @@ export default function ResourceOptimizer() {
     relief_factor: 1.85,
     estimated_budget: 3450
   });
+  const [planLayer, setPlanLayer] = useState("Barricades");
+
+  const handleOptimize = async () => {
+    const optimized = await runOptimization();
+    if (optimized) {
+      setResources(optimized);
+    }
+  };
 
   useEffect(() => {
-    const saved = localStorage.getItem("event_resources");
+    const saved = localStorage.getItem(RESOURCES_STORAGE_KEY);
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -58,7 +71,10 @@ export default function ResourceOptimizer() {
             return <MetricCard key={metric.label} icon={<Icon size={22} />} label={metric.label} value={metric.value} />;
           })}
         </section>
-        <ActionButton icon={<BarChart3 size={23} />} className="compact-button primary">Optimize Deployment</ActionButton>
+        <ActionButton icon={<BarChart3 size={23} />} className="compact-button primary" onClick={handleOptimize}>
+          {isOptimizing ? "Optimizing..." : "Optimize Deployment"}
+        </ActionButton>
+        {error && <p className="error-banner">{error}</p>}
       </Card>
 
       <Card title="Recommended Roster Deployment Schedule" className="table-card">
@@ -86,9 +102,11 @@ export default function ResourceOptimizer() {
 
       <Card title="Tactical Barricading & Diversion Plan" action={<Info size={21} />}>
         <div className="segmented-row">
-          <Pill active>Barricades</Pill>
-          <Pill>Signal Control</Pill>
-          <Pill>Patrol Routes</Pill>
+          {planLayers.map((layer) => (
+            <Pill key={layer} active={planLayer === layer} onClick={() => setPlanLayer(layer)}>
+              {layer}
+            </Pill>
+          ))}
         </div>
         <DiversionMap />
         <div className="summary-strip">
@@ -97,7 +115,7 @@ export default function ResourceOptimizer() {
         </div>
       </Card>
 
-      <ActionButton className="primary" onClick={() => navigate("/live-control")}>Proceed to Live Corridor Control</ActionButton>
+      <ActionButton className="primary" onClick={() => navigate(ROUTES.liveControl)}>Proceed to Live Corridor Control</ActionButton>
     </div>
   );
 }

@@ -1,0 +1,313 @@
+/* ============================================================================
+   Maps — schematic SVG "mock maps", live corridor map, leaflet GIS map
+   ============================================================================ */
+.mock-map {
+  position: relative;
+  overflow: hidden;
+  height: 224px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+}
+
+.map-grid,
+.map-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.route {
+  fill: none;
+  stroke-width: 13;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.route.red { stroke: var(--severe); }
+.route.amber { stroke: var(--moderate); }
+.route.green { stroke: var(--clear); }
+
+.route.light {
+  opacity: 0.55;
+  stroke-width: 7;
+}
+
+.route.dashed {
+  stroke-dasharray: 10 10;
+  stroke-width: 7;
+}
+
+.stadium-icon {
+  filter: drop-shadow(0 5px 8px rgba(14, 23, 38, 0.12));
+}
+
+.stadium-center {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  width: 96px;
+  transform: translate(-50%, -50%);
+}
+
+.stadium-label,
+.buffer-label {
+  position: absolute;
+  left: 50%;
+  top: 64%;
+  transform: translateX(-50%);
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1.15;
+  font-weight: 600;
+  text-align: center;
+}
+
+.diversion-map .stadium-center { top: 45%; }
+.buffer-label { top: 61%; }
+
+.map-label,
+.callout {
+  position: absolute;
+  z-index: 2;
+  padding: 7px 9px;
+  border-radius: var(--r-sm);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: var(--e1);
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.map-label strong,
+.map-label span,
+.map-label small {
+  display: block;
+}
+
+.map-label span,
+.map-label small {
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+.red-label,
+.red-callout { color: var(--severe-ink); border: 1px solid var(--severe); }
+
+.amber-label,
+.amber-callout { color: var(--moderate-ink); border: 1px solid var(--moderate); }
+
+.green-label,
+.green-callout { color: var(--clear-ink); border: 1px solid var(--clear); }
+
+.blue-callout { color: var(--info-ink); border: 1px solid var(--info); }
+
+.map-legend {
+  position: absolute;
+  left: 7px;
+  right: 7px;
+  bottom: 6px;
+  display: flex;
+  justify-content: space-around;
+  gap: 6px;
+  padding: 7px;
+  border-radius: var(--r-sm);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: var(--e0);
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.map-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  display: inline-block;
+  border-radius: 50%;
+}
+
+.red-dot { background: var(--severe); }
+.amber-dot { background: var(--moderate); }
+.green-dot { background: var(--clear); }
+
+/* ---- Diversion plan markers / arrows ----------------------------------- */
+.marker {
+  position: absolute;
+  z-index: 3;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: var(--e1);
+}
+
+.red-marker { color: var(--severe); border: 2px solid var(--severe); }
+.amber-marker { color: var(--moderate-ink); border: 2px solid var(--moderate); }
+.blue-marker { color: #fff; background: var(--info); }
+
+.arrow {
+  fill: none;
+  stroke-width: 5;
+}
+
+.green-arrow { stroke: var(--clear); }
+.red-arrow { stroke: var(--severe); }
+.amber-arrow { stroke: var(--moderate); }
+
+/* ---- Live corridor map -------------------------------------------------- */
+.live-map { height: 300px; }
+
+.live-red { left: 10%; top: 8%; }
+.live-amber { right: 9%; top: 5%; }
+.live-green { left: 42%; bottom: 15%; }
+
+.incident-marker,
+.cctv-marker {
+  position: absolute;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  box-shadow: var(--e2);
+}
+
+.incident-marker {
+  left: 35%;
+  top: 29%;
+  width: 38px;
+  height: 38px;
+  background: var(--severe);
+  font-size: 20px;
+  animation: pulse-ring 2.4s var(--ease-out) infinite;
+}
+
+.cctv-marker {
+  left: 20%;
+  top: 43%;
+  width: 32px;
+  height: 32px;
+  background: var(--ink-2);
+  font-size: 8px;
+}
+
+.waterlogging-tag {
+  position: absolute;
+  left: 35%;
+  top: 45%;
+  z-index: 5;
+  padding: 5px 9px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-xs);
+  background: var(--surface);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.camera-feed {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  z-index: 5;
+  width: 168px;
+  overflow: hidden;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  box-shadow: var(--e2);
+}
+
+.camera-feed header {
+  padding: 6px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.camera-image {
+  position: relative;
+  height: 94px;
+}
+
+.camera-image svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.live-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  border-radius: var(--r-xs);
+  color: #fff;
+  background: var(--severe);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.camera-image footer {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  bottom: 3px;
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 500;
+}
+
+/* ---- Leaflet GIS map ---------------------------------------------------- */
+.interactive-map-container {
+  height: 300px;
+  width: 100%;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  border: 1px solid var(--hairline);
+}
+
+.leaflet-container {
+  font-family: var(--font-body);
+  background: var(--surface-2);
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: var(--r-md);
+  box-shadow: var(--e2);
+}
+
+.leaflet-popup-content {
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+.leaflet-control-attribution {
+  font-size: 9px;
+  background: rgba(255, 255, 255, 0.8) !important;
+}

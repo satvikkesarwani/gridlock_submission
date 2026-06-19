@@ -1,0 +1,84 @@
+/* ============================================================================
+   BottomNav — fixed tab bar inside the phone screen
+   ============================================================================ */
+.bottom-nav {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  height: 90px;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: start;
+  padding: 12px 14px 22px;
+  border-top: 1px solid var(--hairline);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 -10px 24px -16px rgba(14, 23, 38, 0.2);
+}
+
+.nav-item {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  color: var(--faint);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 600;
+  transition: color var(--dur-2) var(--ease-out);
+}
+
+.nav-item:hover {
+  color: var(--ink-2);
+}
+
+.nav-item.active {
+  color: var(--accent-ink);
+}
+
+.nav-icon-wrap {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 30px;
+  border-radius: var(--r-sm);
+  transition: background-color var(--dur-2) var(--ease-out);
+}
+
+.nav-item.active .nav-icon-wrap {
+  background: var(--accent-weak);
+}
+
+.nav-badge {
+  position: absolute;
+  top: -3px;
+  right: 1px;
+  min-width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+  padding: 0 4px;
+  border-radius: 50%;
+  border: 1.5px solid var(--surface);
+  color: #fff;
+  background: var(--severe);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.home-indicator {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  width: 104px;
+  height: 4px;
+  border-radius: 99px;
+  background: rgba(14, 23, 38, 0.18);
+  transform: translateX(-50%);
+}

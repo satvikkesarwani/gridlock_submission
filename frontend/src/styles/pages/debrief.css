@@ -1,0 +1,71 @@
+/* ============================================================================
+   Post-Event Debrief — after-action summary, selects, learning insights
+   ============================================================================ */
+.select-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s3);
+  margin-bottom: var(--s4);
+}
+
+.select-box {
+  position: relative;
+  min-height: 60px;
+  padding: var(--s3) 34px var(--s3) var(--s3);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+}
+
+.select-box span {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--faint);
+  font-size: 18px;
+}
+
+.review-badge {
+  padding: 5px 11px;
+  border-radius: var(--r-pill);
+  color: var(--accent-ink);
+  background: var(--accent-weak);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+/* ---- Learning insights -------------------------------------------------- */
+.insight-list {
+  display: grid;
+  gap: var(--s3);
+}
+
+.insight-row {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: var(--s3);
+  align-items: center;
+}
+
+.insight-row p {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.insight-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-sm);
+}
+
+.tone-0 { color: var(--clear); background: var(--clear-weak); }
+.tone-1 { color: var(--moderate); background: var(--moderate-weak); }
+.tone-2 { color: var(--info); background: var(--info-weak); }

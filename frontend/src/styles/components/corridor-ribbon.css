@@ -1,0 +1,205 @@
+/* ============================================================================
+   SIGNATURE — Corridor Ribbon
+   Congestion rendered as a living quantity flowing along a route: a segmented
+   green->amber->red band with km ticks and a gliding "pressure" marker.
+   Plus the Clearance Band variant (P10-P50-P90 as a range).
+   ============================================================================ */
+.corridor-ribbon {
+  display: grid;
+  gap: 10px;
+}
+
+.ribbon-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+}
+
+.ribbon-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: var(--track-eyebrow);
+  text-transform: uppercase;
+}
+
+.ribbon-eyebrow b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.ribbon-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.ribbon-status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.ribbon-status.clear { color: var(--clear-ink); background: var(--clear-weak); }
+.ribbon-status.moderate { color: var(--moderate-ink); background: var(--moderate-weak); }
+.ribbon-status.severe { color: var(--severe-ink); background: var(--severe-weak); }
+
+/* ---- The band ----------------------------------------------------------- */
+.ribbon-track {
+  position: relative;
+  padding-top: 12px; /* room for the marker dot */
+}
+
+.ribbon-band {
+  display: flex;
+  gap: 2px;
+  height: 16px;
+  border-radius: var(--r-pill);
+  overflow: hidden;
+  background: var(--surface-sunken);
+}
+
+.ribbon-seg {
+  min-width: 0;
+  height: 100%;
+  transform-origin: left center;
+  animation: ribbon-fill var(--dur-4) var(--ease-out) both;
+}
+
+.ribbon-seg:nth-child(1) { animation-delay: 60ms; }
+.ribbon-seg:nth-child(2) { animation-delay: 110ms; }
+.ribbon-seg:nth-child(3) { animation-delay: 160ms; }
+.ribbon-seg:nth-child(4) { animation-delay: 210ms; }
+.ribbon-seg:nth-child(5) { animation-delay: 260ms; }
+.ribbon-seg:nth-child(6) { animation-delay: 310ms; }
+
+.ribbon-seg.clear { background: var(--clear); }
+.ribbon-seg.moderate { background: var(--moderate); }
+.ribbon-seg.severe { background: var(--severe); }
+
+/* ---- Live pressure marker (glides on update) ---------------------------- */
+.ribbon-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--ink);
+  transform: translateX(-50%);
+  transition: left var(--dur-4) var(--ease-in-out);
+}
+
+.ribbon-marker::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  transform: translateX(-50%);
+  animation: pulse-ring 2.6s var(--ease-out) infinite;
+}
+
+.ribbon-ticks {
+  display: flex;
+  justify-content: space-between;
+  color: var(--faint);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================================================
+   Clearance Band — P10 .. P50 .. P90 expressed as a corridor of time
+   ============================================================================ */
+.clearance-band {
+  display: grid;
+  gap: 12px;
+  padding-top: var(--s1);
+}
+
+.cb-track {
+  position: relative;
+  height: 14px;
+  border-radius: var(--r-pill);
+  background: var(--surface-sunken);
+  overflow: hidden;
+}
+
+.cb-range {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: var(--r-pill);
+  background: linear-gradient(90deg, var(--clear) 0%, var(--moderate) 52%, var(--severe) 100%);
+  transform-origin: left center;
+  animation: ribbon-fill var(--dur-4) var(--ease-out) both;
+}
+
+.cb-marker {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 3px solid var(--ink);
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.cb-scale {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s2);
+}
+
+.cb-point {
+  display: grid;
+  gap: 3px;
+  font-family: var(--font-mono);
+}
+
+.cb-point:nth-child(2) { text-align: center; }
+.cb-point:last-child { text-align: right; }
+
+.cb-point small {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cb-point strong {
+  font-family: var(--font-mono);
+  font-size: 17px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.cb-point.clear strong { color: var(--clear-ink); }
+.cb-point.moderate strong { color: var(--moderate-ink); }
+.cb-point.severe strong { color: var(--severe-ink); }
+
+.cb-unit {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+}

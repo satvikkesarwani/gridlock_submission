@@ -1,0 +1,112 @@
+/* ============================================================================
+   Buttons — ActionButton (primary / secondary) + bare icon buttons
+   ============================================================================ */
+.action-button {
+  position: relative;
+  width: 100%;
+  min-height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s2);
+  margin: var(--s3) 0 var(--s2);
+  padding: 14px 52px;
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: var(--track-tight);
+  transition: transform var(--dur-1) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out),
+    background-color var(--dur-2) var(--ease-out);
+}
+
+.action-button.primary {
+  color: #fff;
+  background: var(--accent);
+  box-shadow: 0 1px 2px rgba(14, 23, 38, 0.08), 0 10px 22px -12px var(--accent-glow);
+}
+
+.action-button.primary:hover {
+  background: var(--accent-strong);
+  box-shadow: 0 2px 4px rgba(14, 23, 38, 0.1), 0 14px 26px -12px var(--accent-glow);
+}
+
+.action-button.primary:active {
+  transform: scale(0.985);
+}
+
+.action-button.secondary {
+  min-height: 44px;
+  max-width: 300px;
+  margin: var(--s3) auto var(--s2);
+  padding: 10px 22px;
+  color: var(--accent-ink);
+  background: var(--surface);
+  border-color: var(--hairline);
+  box-shadow: var(--e0);
+  font-size: 14px;
+}
+
+.action-button.secondary:hover {
+  border-color: var(--accent);
+  background: var(--accent-weak);
+}
+
+.action-button.secondary:active {
+  transform: scale(0.985);
+}
+
+.compact-button {
+  margin-top: var(--s4);
+  min-height: 48px;
+}
+
+.button-icon,
+.button-arrow {
+  display: inline-grid;
+  place-items: center;
+}
+
+.button-arrow {
+  position: absolute;
+  right: 12px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  transition: transform var(--dur-2) var(--ease-out);
+}
+
+.action-button.primary:hover .button-arrow {
+  transform: translateX(2px);
+}
+
+/* ---- Bare icon buttons (header) ---------------------------------------- */
+.icon-button,
+.plain-icon-button {
+  width: 42px;
+  height: 42px;
+  display: inline-grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--r-md);
+  background: transparent;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: background-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
+}
+
+.plain-icon-button {
+  width: 40px;
+  height: 40px;
+}
+
+.icon-button:hover,
+.plain-icon-button:hover {
+  background: var(--surface-sunken);
+  color: var(--ink);
+}

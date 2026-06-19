@@ -1,0 +1,103 @@
+/* ============================================================================
+   Charts — recharts theming + horizontal bar list
+   ============================================================================ */
+.chart-card {
+  padding-bottom: 10px;
+}
+
+.chart-y-label {
+  margin: 0 0 2px 2px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* recharts surface overrides */
+.recharts-cartesian-grid line {
+  stroke: var(--hairline-2);
+}
+
+.recharts-cartesian-axis-tick-value {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  fill: var(--muted);
+}
+
+.recharts-tooltip-wrapper:focus-visible {
+  outline: none;
+}
+
+.recharts-default-tooltip {
+  border-radius: var(--r-md) !important;
+  border: 1px solid var(--hairline) !important;
+  box-shadow: var(--e2);
+  font-family: var(--font-body);
+  font-size: 12px;
+  padding: 8px 11px !important;
+}
+
+.recharts-tooltip-label {
+  color: var(--muted) !important;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.recharts-tooltip-item {
+  font-family: var(--font-mono) !important;
+  font-variant-numeric: tabular-nums;
+}
+
+.recharts-legend-item-text {
+  color: var(--ink-2) !important;
+  font-size: 12px;
+}
+
+/* ---- Horizontal bar list (SHAP importance) ----------------------------- */
+.bar-list {
+  display: grid;
+  gap: 12px;
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 128px 1fr 42px;
+  align-items: center;
+  gap: var(--s2);
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  font-weight: 500;
+}
+
+.bar-track {
+  overflow: hidden;
+  height: 12px;
+  border-radius: var(--r-pill);
+  background: var(--surface-sunken);
+}
+
+.bar-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-strong) 100%);
+  transform-origin: left center;
+  animation: ribbon-fill var(--dur-4) var(--ease-out) both;
+}
+
+.bar-row strong {
+  color: var(--ink);
+  font-size: var(--t-sm);
+  text-align: right;
+}
+
+.bar-axis {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  margin: var(--s2) 42px 0 128px;
+  color: var(--faint);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}

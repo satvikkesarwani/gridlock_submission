@@ -34,14 +34,14 @@ export default function InteractiveMap() {
   ];
 
   return (
-    <div className="interactive-map-container" style={{ height: '330px', width: '100%', borderRadius: '12px', overflow: 'hidden' }}>
+    <div className="interactive-map-container">
       <MapContainer center={center} zoom={15} style={{ height: '100%', width: '100%' }} zoomControl={false}>
-        {/* Dark theme map tiles from CartoDB */}
+        {/* Light theme map tiles from CartoDB */}
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         />
-        
+
         {/* Main Incident Location */}
         <Marker position={center} icon={severeIcon}>
           <Popup>
@@ -52,16 +52,16 @@ export default function InteractiveMap() {
         </Marker>
 
         {/* Stadium Buffer Zone */}
-        <Circle 
-          center={center} 
-          pathOptions={{ fillColor: '#ef4444', color: '#ef4444', fillOpacity: 0.2 }} 
-          radius={500} 
+        <Circle
+          center={center}
+          pathOptions={{ fillColor: '#dd4a3e', color: '#dd4a3e', fillOpacity: 0.12, weight: 1.5 }}
+          radius={500}
         />
 
         {/* Diversion Route */}
-        <Polyline 
-          positions={diversionRoute} 
-          pathOptions={{ color: '#10b981', weight: 4, dashArray: '10, 10' }} 
+        <Polyline
+          positions={diversionRoute}
+          pathOptions={{ color: '#1f9d6b', weight: 4, dashArray: '10, 10' }}
         />
         
         {/* Barricade Markers */}

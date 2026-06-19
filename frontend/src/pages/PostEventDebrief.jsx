@@ -7,7 +7,8 @@ import Card from "../components/Card.jsx";
 import HorizontalBarChart from "../components/HorizontalBarChart.jsx";
 import MetricCard from "../components/MetricCard.jsx";
 import MiniLineChart from "../components/MiniLineChart.jsx";
-import { API_BASE_URL } from "../config/api.js";
+import { getDebrief } from "../api/eventflow.js";
+import { ROUTES } from "../constants/routes.js";
 import { event, insights, planVsActual as initialPVA, shapImportance as initialSHAP, varianceMetrics as initialVM } from "../data/mockData.js";
 
 const varianceIcons = [Clock, TrendingUp, Workflow, SlidersHorizontal];
@@ -29,12 +30,8 @@ export default function PostEventDebrief() {
     const fetchDebrief = async () => {
       try {
         setError("");
-        const res = await fetch(`${API_BASE_URL}/api/debrief`);
-        if (!res.ok) {
-          throw new Error(`Request failed with ${res.status}`);
-        }
-        const data = await res.json();
-        
+        const data = await getDebrief();
+
         setDebriefData({
           targetDelay: data.target_delay,
           actualDelay: data.actual_delay,
@@ -80,7 +77,6 @@ export default function PostEventDebrief() {
           <MetricCard icon={<AlertTriangle size={24} />} label="Variance" value={debriefData.variance} tone="red" />
           <MetricCard icon={<Car size={24} />} label="Delay Hours" value={debriefData.delayHours} />
         </section>
-        <ActionButton variant="secondary" icon={<SlidersHorizontal size={20} />}>Calibrate DUA Model</ActionButton>
         {error && <p className="error-banner">{error}</p>}
       </Card>
 
@@ -89,8 +85,8 @@ export default function PostEventDebrief() {
         yLabel="Vol"
         data={debriefData.planVsActual}
         lines={[
-          { key: "planned", name: "Planned Baseline", color: "#3a7bd5", dashed: true },
-          { key: "actual", name: "Actual Flow", color: "#00d2ff" },
+          { key: "planned", name: "Planned Baseline", color: "#8a97ac", dashed: true },
+          { key: "actual", name: "Actual Flow", color: "#0ba6a0" },
         ]}
       />
 
@@ -116,10 +112,10 @@ export default function PostEventDebrief() {
             </div>
           ))}
         </div>
-        <ActionButton className="primary" icon={<Workflow size={20} />}>Update Simulation Parameters</ActionButton>
+        <ActionButton className="primary" icon={<Workflow size={20} />} onClick={() => navigate(ROUTES.simulator)}>Update Simulation Parameters</ActionButton>
       </Card>
 
-      <ActionButton onClick={() => navigate("/")}>Return to Dashboard</ActionButton>
+      <ActionButton onClick={() => navigate(ROUTES.home)}>Return to Dashboard</ActionButton>
     </div>
   );
 }

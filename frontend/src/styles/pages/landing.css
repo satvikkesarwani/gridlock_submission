@@ -1,0 +1,167 @@
+/* ============================================================================
+   Landing — hero (corridor ribbon thesis), event summary, feature grid
+   ============================================================================ */
+.hero {
+  margin-top: var(--s5);
+}
+
+.hero h1 {
+  margin: 0;
+  max-width: 280px;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--t-display);
+  line-height: var(--lh-tight);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.hero p {
+  margin: var(--s3) 0 0;
+  color: var(--muted);
+  font-size: var(--t-body);
+  line-height: var(--lh-body);
+}
+
+.hero p b {
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+
+/* The hero corridor card is the signature thesis moment */
+.hero-corridor {
+  margin-top: var(--s4);
+  background: linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
+}
+
+/* ---- Event summary card ------------------------------------------------- */
+.event-summary-card {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: var(--s3);
+  padding: var(--s5);
+}
+
+.timeline-icons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.timeline-icons span {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-sm);
+  color: var(--accent);
+  background: var(--accent-weak);
+}
+
+.timeline-icons i {
+  width: 2px;
+  height: 20px;
+  margin: 4px 0;
+  background: repeating-linear-gradient(var(--accent) 0 3px, transparent 3px 6px);
+}
+
+.event-summary-content {
+  display: grid;
+  gap: var(--s4);
+}
+
+.event-summary-content small {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.event-summary-content strong {
+  display: block;
+  margin-top: 3px;
+  color: var(--ink);
+  font-size: 16px;
+  line-height: var(--lh-snug);
+  font-weight: 600;
+}
+
+.summary-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s3);
+}
+
+/* ---- Feature grid ------------------------------------------------------- */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s3);
+}
+
+.feature-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 150px;
+  padding: var(--s4);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--e0);
+  text-align: left;
+  cursor: pointer;
+  transition: transform var(--dur-2) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out),
+    border-color var(--dur-2) var(--ease-out);
+}
+
+.feature-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--e2);
+  border-color: var(--accent);
+}
+
+.feature-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-sm);
+  color: var(--accent);
+  background: var(--accent-weak);
+}
+
+.feature-card strong {
+  display: block;
+  margin-top: var(--s3);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 15px;
+  line-height: 1.15;
+  font-weight: 600;
+  letter-spacing: var(--track-tight);
+}
+
+.feature-card p {
+  margin: var(--s2) 18px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.feature-arrow {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  color: var(--faint);
+  transition: transform var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
+}
+
+.feature-card:hover .feature-arrow {
+  color: var(--accent);
+  transform: translateX(3px);
+}
