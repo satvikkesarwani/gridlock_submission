@@ -16,6 +16,23 @@ export const event = {
   status: "Planning Active",
 };
 
+// The signature corridor: congestion severity along the active route.
+export const activeCorridor = {
+  road: "Whitefield Rd",
+  status: "severe",
+  statusLabel: "Severe",
+  pressure: 0.66,
+  segments: [
+    { severity: "clear", weight: 1.4 },
+    { severity: "moderate", weight: 1.2 },
+    { severity: "severe", weight: 1.7 },
+    { severity: "severe", weight: 1.0 },
+    { severity: "moderate", weight: 1.3 },
+    { severity: "clear", weight: 1.1 },
+  ],
+  ticks: ["0", "2", "4", "6", "8 km"],
+};
+
 export const landingMetrics = [
   { label: "Active Corridors", value: "3", tone: "green" },
   { label: "Live Incidents", value: "1", tone: "red" },

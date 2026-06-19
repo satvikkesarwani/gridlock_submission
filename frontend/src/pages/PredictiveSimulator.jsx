@@ -6,19 +6,23 @@ import AppHeader from "../components/AppHeader.jsx";
 import Card from "../components/Card.jsx";
 import MetricCard from "../components/MetricCard.jsx";
 import MiniLineChart from "../components/MiniLineChart.jsx";
+import { ClearanceBand } from "../components/CorridorRibbon.jsx";
 import { CongestionMap } from "../components/MockMap.jsx";
-import { API_BASE_URL } from "../config/api.js";
 import Pill from "../components/Pill.jsx";
+import { useSimulation } from "../hooks/useSimulation.js";
+import { ROUTES } from "../constants/routes.js";
 import { event, inflowProjection } from "../data/mockData.js";
 
 const fieldIcons = [CalendarDays, Users, MapPin, Clock];
 
 export default function PredictiveSimulator() {
   const navigate = useNavigate();
-  const [isSimulating, setIsSimulating] = useState(false);
+  const { isLoading: isSimulating, error, runSimulation } = useSimulation();
   const [results, setResults] = useState(null);
-  const [error, setError] = useState("");
-  
+  const [mitigation, setMitigation] = useState("Heatmap");
+
+  const mitigationOptions = ["Heatmap", "Ingress Paths", "Transit Feeds"];
+
   const fields = [
     ["Event Type", event.type],
     ["Expected Attendance", event.attendance],
@@ -27,43 +31,9 @@ export default function PredictiveSimulator() {
   ];
 
   const handleSimulate = async () => {
-    setIsSimulating(true);
-    setError("");
-    const payload = {
-      event_cause: "public_event",
-      priority: "High",
-      hour_of_day: 20,
-      is_weekend: true,
-      requires_road_closure: true,
-      attendance: event.attendance
-    };
-    const post = (path) =>
-      fetch(`${API_BASE_URL}${path}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      }).then(async (r) => {
-        const data = await r.json();
-        if (!r.ok) {
-          throw new Error(data.detail || `Request failed with ${r.status}`);
-        }
-        return data;
-      });
-
-    try {
-      // Point estimate + clearance-time range, fetched together.
-      const [data, range] = await Promise.all([
-        post("/api/simulate"),
-        post("/api/clearance-risk"),
-      ]);
-      setResults({ ...data, clearanceRange: range });
-      // Store resources for the optimizer page
-      localStorage.setItem("event_resources", JSON.stringify(data.resources));
-    } catch (error) {
-      console.error("Simulation failed:", error);
-      setError("Simulation failed. Check backend availability and try again.");
-    } finally {
-      setIsSimulating(false);
+    const data = await runSimulation();
+    if (data) {
+      setResults(data);
     }
   };
 
@@ -87,9 +57,11 @@ export default function PredictiveSimulator() {
         })}
         <div className="input-label">Select Mitigation</div>
         <div className="segmented-row">
-          <Pill active>Heatmap</Pill>
-          <Pill>Ingress Paths</Pill>
-          <Pill>Transit Feeds</Pill>
+          {mitigationOptions.map((option) => (
+            <Pill key={option} active={mitigation === option} onClick={() => setMitigation(option)}>
+              {option}
+            </Pill>
+          ))}
         </div>
         <ActionButton 
           icon={<Play size={20} />} 
@@ -115,28 +87,13 @@ export default function PredictiveSimulator() {
           </section>
 
           {results.clearanceRange?.status === "success" && (
-            <Card title="Clearance Time Forecast" action={<Clock size={21} />}>
-              <p className="card-subtext">Expected clearance with confidence range (P10–P90).</p>
-              <section className="kpi-grid three">
-                <MetricCard
-                  icon={<TrendingUp size={21} />}
-                  label="Optimistic"
-                  value={`${results.clearanceRange.optimistic_p10_mins} min`}
-                  tone="green"
-                />
-                <MetricCard
-                  icon={<Clock size={21} />}
-                  label="Expected"
-                  value={`${results.clearanceRange.expected_clearance_mins} min`}
-                  tone="amber"
-                />
-                <MetricCard
-                  icon={<Clock size={21} />}
-                  label="Pessimistic"
-                  value={`${results.clearanceRange.pessimistic_p90_mins} min`}
-                  tone="red"
-                />
-              </section>
+            <Card title="Clearance Time Forecast" action={<Clock size={21} />} className="clearance-card">
+              <p className="card-subtext">Time to clear the corridor, with P10–P90 confidence range.</p>
+              <ClearanceBand
+                p10={results.clearanceRange.optimistic_p10_mins}
+                p50={results.clearanceRange.expected_clearance_mins}
+                p90={results.clearanceRange.pessimistic_p90_mins}
+              />
             </Card>
           )}
 
@@ -145,12 +102,12 @@ export default function PredictiveSimulator() {
             yLabel="Vehicles / hr"
             data={inflowProjection}
             lines={[
-              { key: "projected", name: "Projected Demand", color: "#00d2ff" },
-              { key: "baseline", name: "Baseline Demand", color: "#3a7bd5", dashed: true },
+              { key: "projected", name: "Projected Demand", color: "#0ba6a0" },
+              { key: "baseline", name: "Baseline Demand", color: "#8a97ac", dashed: true },
             ]}
           />
 
-          <ActionButton className="primary" onClick={() => navigate("/optimizer")}>Proceed to Resource Optimizer</ActionButton>
+          <ActionButton className="primary" onClick={() => navigate(ROUTES.optimizer)}>Proceed to Resource Optimizer</ActionButton>
         </>
       )}
     </div>

@@ -1,0 +1,173 @@
+/* ============================================================================
+   Live Corridor Control — incident alert, info lines, clearance forecast
+   ============================================================================ */
+.alert-card {
+  padding: var(--s3) var(--s4);
+  border-color: rgba(221, 74, 62, 0.28);
+}
+
+.alert-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--s3);
+  border-bottom: 1px solid var(--hairline-2);
+}
+
+.alert-header h2 {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  color: var(--severe-ink);
+}
+
+.alert-header h2 svg {
+  color: var(--severe);
+}
+
+.live-badge,
+.alert-header .live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.alert-header .live-badge {
+  position: static;
+  padding: 4px 9px;
+  border-radius: var(--r-pill);
+  background: var(--severe-weak);
+  color: var(--severe-ink);
+  box-shadow: none;
+}
+
+.alert-header .live-badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--severe);
+  animation: pulse-ring 2s var(--ease-out) infinite;
+}
+
+.incident-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  padding: var(--s3) 0 0;
+}
+
+.info-line {
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  gap: var(--s2);
+  padding: var(--s2) var(--s1);
+  align-items: center;
+}
+
+.info-line small {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.info-line strong {
+  display: block;
+  margin-top: 2px;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.info-line > span {
+  color: var(--accent);
+}
+
+.info-line.red > span,
+.info-line.red strong { color: var(--severe); }
+
+.info-line.blue > span { color: var(--info); }
+
+.info-line.green > span,
+.info-line.green strong { color: var(--clear); }
+
+.live-ribbon {
+  margin-bottom: var(--s4);
+  padding-bottom: var(--s4);
+  border-bottom: 1px solid var(--hairline-2);
+}
+
+/* ---- Clearance forecast ------------------------------------------------- */
+.clearance-layout {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: var(--s3);
+  align-items: center;
+}
+
+.clearance-number small {
+  display: block;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.clearance-number strong {
+  display: block;
+  margin-top: var(--s2);
+  color: var(--severe-ink);
+  font-family: var(--font-mono);
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.clearance-number strong span {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.clearance-number em {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: var(--s3);
+  padding: 3px 8px;
+  border-radius: var(--r-pill);
+  background: var(--accent-weak);
+  color: var(--accent-ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.clearance-chart {
+  position: relative;
+  min-height: 150px;
+}
+
+.clear-callout {
+  position: absolute;
+  left: 54%;
+  top: 2px;
+  padding: 6px 8px;
+  border: 1px solid var(--severe);
+  border-radius: var(--r-xs);
+  color: var(--severe-ink);
+  background: rgba(255, 255, 255, 0.96);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+}

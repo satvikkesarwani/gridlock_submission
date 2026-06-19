@@ -25,10 +25,12 @@ import ActionButton from "../components/ActionButton.jsx";
 import AppHeader from "../components/AppHeader.jsx";
 import Card from "../components/Card.jsx";
 import MetricCard from "../components/MetricCard.jsx";
+import { CorridorRibbon } from "../components/CorridorRibbon.jsx";
 import InteractiveMap from "../components/InteractiveMap.jsx";
 import { WS_BASE_URL } from "../config/api.js";
 import Pill from "../components/Pill.jsx";
-import { clearanceForecast as initialForecast, liveMetrics as initialMetrics } from "../data/mockData.js";
+import { ROUTES } from "../constants/routes.js";
+import { activeCorridor, clearanceForecast as initialForecast, liveMetrics as initialMetrics } from "../data/mockData.js";
 
 const metricIcons = [Gauge, Gauge, Siren, RadioTower, AlarmClock, Clock];
 
@@ -40,6 +42,9 @@ export default function LiveCorridorControl() {
     estimatedClearance: "35 min"
   });
   const [connectionError, setConnectionError] = useState("");
+  const [layers, setLayers] = useState({ "Speed Layers": true, CCTV: true, Incidents: true });
+
+  const toggleLayer = (name) => setLayers((prev) => ({ ...prev, [name]: !prev[name] }));
 
   useEffect(() => {
     // Connect to WebSocket
@@ -91,20 +96,28 @@ export default function LiveCorridorControl() {
           <InfoLine icon={<Droplets size={23} />} label="Type" value="Waterlogging" tone="blue" />
           <InfoLine icon={<Users size={23} />} label="Status" value="Responder Dispatched" tone="green" />
         </div>
-        <div className="button-row">
-          <Pill active><Users size={15} />Apply Diversion A</Pill>
-          <Pill>Override Signal 12</Pill>
-          <Pill><RadioTower size={15} />Broadcast DMS Alert</Pill>
-        </div>
         {connectionError && <p className="error-banner">{connectionError}</p>}
       </Card>
 
       <Card title="Real-Time GIS Corridor Monitoring" action={<Info size={21} />}>
+        <div className="live-ribbon">
+          <CorridorRibbon
+            eyebrow="Live Corridor"
+            road={activeCorridor.road}
+            status={activeCorridor.status}
+            statusLabel={activeCorridor.statusLabel}
+            segments={activeCorridor.segments}
+            ticks={activeCorridor.ticks}
+            pressure={activeCorridor.pressure}
+          />
+        </div>
         <InteractiveMap />
         <div className="filter-row">
-          <Pill active>Speed Layers</Pill>
-          <Pill active>CCTV</Pill>
-          <Pill active>Incidents</Pill>
+          {["Speed Layers", "CCTV", "Incidents"].map((name) => (
+            <Pill key={name} active={layers[name]} onClick={() => toggleLayer(name)}>
+              {name}
+            </Pill>
+          ))}
         </div>
       </Card>
 
@@ -127,11 +140,11 @@ export default function LiveCorridorControl() {
           <div className="clearance-chart">
             <ResponsiveContainer width="100%" height={150}>
               <AreaChart data={liveData.forecast} margin={{ top: 8, right: 4, left: -20, bottom: 0 }}>
-                <CartesianGrid stroke="#edf2f6" vertical={false} />
-                <XAxis dataKey="time" tick={{ fill: "#20304a", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "#cbd5e1" }} />
-                <YAxis tick={{ fill: "#20304a", fontSize: 11 }} tickLine={false} axisLine={false} tickFormatter={(value) => (value > 66 ? "High" : value > 33 ? "Med" : "Low")} />
-                <Area dataKey="congestion" type="monotone" stroke="none" fill="#f8b6b6" fillOpacity={0.5} />
-                <Line dataKey="congestion" type="monotone" stroke="#e53935" strokeWidth={3} dot={{ r: 4 }} strokeDasharray="7 5" />
+                <CartesianGrid stroke="#edf1f6" vertical={false} />
+                <XAxis dataKey="time" tick={{ fill: "#5c6b82", fontSize: 11 }} tickLine={false} axisLine={{ stroke: "#e3e9f1" }} />
+                <YAxis tick={{ fill: "#5c6b82", fontSize: 11 }} tickLine={false} axisLine={false} tickFormatter={(value) => (value > 66 ? "High" : value > 33 ? "Med" : "Low")} />
+                <Area dataKey="congestion" type="monotone" stroke="none" fill="#dd4a3e" fillOpacity={0.12} animationDuration={700} animationEasing="ease-out" />
+                <Line dataKey="congestion" type="monotone" stroke="#dd4a3e" strokeWidth={2.5} dot={{ r: 3, strokeWidth: 0, fill: "#dd4a3e" }} strokeDasharray="6 5" animationDuration={700} animationEasing="ease-out" />
               </AreaChart>
             </ResponsiveContainer>
             <span className="clear-callout">Est. Clear<br />10:59 AM</span>
@@ -139,7 +152,7 @@ export default function LiveCorridorControl() {
         </div>
       </Card>
 
-      <ActionButton className="primary" onClick={() => navigate("/debrief")}>Proceed to Post-Event Debriefing</ActionButton>
+      <ActionButton className="primary" onClick={() => navigate(ROUTES.debrief)}>Proceed to Post-Event Debriefing</ActionButton>
     </div>
   );
 }

@@ -1,0 +1,47 @@
+/* ============================================================================
+   Card — titled white surface, hairline border, soft low-spread elevation
+   ============================================================================ */
+.card {
+  position: relative;
+  width: 100%;
+  margin: var(--s3) 0;
+  padding: var(--s4);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--e1);
+  transition: box-shadow var(--dur-3) var(--ease-out),
+    transform var(--dur-3) var(--ease-out),
+    border-color var(--dur-3) var(--ease-out);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  margin-bottom: var(--s3);
+}
+
+.card-header h2,
+.alert-header h2 {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--t-h2);
+  line-height: var(--lh-snug);
+  font-weight: 600;
+  letter-spacing: var(--track-tight);
+}
+
+.card-header > svg,
+.card-header .info-action {
+  color: var(--faint);
+  flex: 0 0 auto;
+}
+
+.card-subtext {
+  margin: -2px 0 var(--s3);
+  font-size: var(--t-sm);
+  color: var(--muted);
+}
