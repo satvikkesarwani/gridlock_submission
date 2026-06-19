@@ -41,7 +41,7 @@ class SimulationRequest(BaseModel):
     requires_road_closure: bool
     attendance: Optional[str] = None
 
-@app.get("/")
+@app.get("/api/health")
 def read_root():
     return {"message": "Welcome to EventFlow AI API"}
 
