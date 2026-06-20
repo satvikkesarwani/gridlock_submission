@@ -9,6 +9,7 @@ import MetricCard from "../components/MetricCard.jsx";
 import MiniLineChart from "../components/MiniLineChart.jsx";
 import { getDebrief } from "../api/eventflow.js";
 import { ROUTES } from "../constants/routes.js";
+import { loadEventType } from "../constants/simulation.js";
 import { event, insights, planVsActual as initialPVA, shapImportance as initialSHAP, varianceMetrics as initialVM } from "../data/mockData.js";
 
 const varianceIcons = [Clock, TrendingUp, Workflow, SlidersHorizontal];
@@ -25,6 +26,7 @@ export default function PostEventDebrief() {
     shapImportance: initialSHAP
   });
   const [error, setError] = useState("");
+  const eventType = loadEventType();
 
   useEffect(() => {
     const fetchDebrief = async () => {
@@ -62,7 +64,7 @@ export default function PostEventDebrief() {
         <div className="select-grid">
           <div className="select-box">
             <small>Select Special Event</small>
-            <strong>{event.name}</strong>
+            <strong>{eventType}</strong>
             <span>⌄</span>
           </div>
           <div className="select-box">

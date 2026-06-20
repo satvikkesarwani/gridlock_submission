@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, WebSocket, Request
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
+import random
 from pydantic import BaseModel, Field
 from typing import Optional
 import os
@@ -9,16 +10,18 @@ import sys
 
 # Add ml_components to path so we can import
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from ml_components.model_pipeline import TrafficImpactModel, ResourceOptimizer
+from ml_components.model_pipeline import (TrafficImpactModel, ResourceOptimizer,
+                                          CATEGORICAL_FEATURES, NUMERIC_FEATURES)
 from ml_components.quantile_model import ClearanceRangeModel
 
 app = FastAPI(title="EventFlow AI Backend")
 
-# Allow frontend to access API
+# Allow the frontend to call the API. Credentials are disabled because a wildcard
+# origin with credentials is rejected by browsers (and the app uses no cookies).
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -91,9 +94,58 @@ def clearance_risk(req: SimulationRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/api/live-status")
-def get_live_status():
-    import random
+# Human-readable groupings for the model's engineered features.
+_FEATURE_LABELS = {
+    "event_cause": "Event type / cause",
+    "priority": "Incident priority",
+    "event_type": "Event class",
+    "corridor": "Corridor location",
+    "veh_type": "Vehicle type",
+    "is_weekend": "Weekend",
+    "requires_road_closure": "Road closure",
+    "is_rush_hour": "Rush hour",
+    "hour_sin": "Time of day",
+    "hour_cos": "Time of day",
+    "month_sin": "Month / season",
+    "month_cos": "Month / season",
+    "day_of_week": "Day of week",
+}
+
+
+@app.get("/api/explain")
+def explain_model():
+    """Global feature importance from the trained LightGBM impact model, aggregated
+    from the one-hot/scaled columns back to human-readable factors. This is genuine
+    model-derived explainability (not a heuristic)."""
+    try:
+        pipeline = impact_model.model.regressor_
+        prep = pipeline.named_steps["prep"]
+        regressor = pipeline.named_steps["reg"]
+        names = prep.get_feature_names_out()
+        importances = regressor.feature_importances_
+
+        grouped = {}
+        for raw_name, value in zip(names, importances):
+            base = raw_name.split("__", 1)[-1]
+            for feat in CATEGORICAL_FEATURES + NUMERIC_FEATURES:
+                if base == feat or base.startswith(feat + "_"):
+                    base = feat
+                    break
+            label = _FEATURE_LABELS.get(base, base)
+            grouped[label] = grouped.get(label, 0.0) + float(value)
+
+        total = sum(grouped.values()) or 1.0
+        drivers = sorted(
+            ({"factor": k, "importance": round(v / total, 4)} for k, v in grouped.items()),
+            key=lambda d: -d["importance"],
+        )
+        return {"drivers": drivers[:6], "status": "success"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Explainability unavailable: {e}")
+
+
+def _live_status_metrics():
+    """Live-status fields shared by the REST snapshot and the WebSocket stream."""
     return {
         "travel_time_index": round(random.uniform(1.8, 2.5), 1),
         "avg_speed": random.randint(10, 20),
@@ -101,6 +153,13 @@ def get_live_status():
         "dms_status": "Broadcasting",
         "dispatch_time": f"{random.randint(5, 12)} min",
         "estimated_clearance": f"{random.randint(20, 45)} min",
+    }
+
+
+@app.get("/api/live-status")
+def get_live_status():
+    return {
+        **_live_status_metrics(),
         "clearance_forecast": [
             {"time": "10:00", "congestion": 85},
             {"time": "10:30", "congestion": 72},
@@ -112,7 +171,6 @@ def get_live_status():
 
 @app.get("/api/debrief")
 def get_debrief():
-    import random
     return {
         "target_delay": "12.0 min",
         "actual_delay": "18.5 min",
@@ -143,17 +201,11 @@ def get_debrief():
 @app.websocket("/api/ws/live-status")
 async def websocket_live_status(websocket: WebSocket):
     await websocket.accept()
-    import random
     try:
         while True:
             # Simulate real-time fluctuating data
             data = {
-                "travel_time_index": round(random.uniform(1.8, 2.5), 1),
-                "avg_speed": random.randint(10, 20),
-                "active_incidents": random.randint(1, 3),
-                "dms_status": "Broadcasting",
-                "dispatch_time": f"{random.randint(5, 12)} min",
-                "estimated_clearance": f"{random.randint(20, 45)} min",
+                **_live_status_metrics(),
                 "clearance_forecast": [
                     {"time": "10:00", "congestion": random.randint(80, 95)},
                     {"time": "10:30", "congestion": random.randint(65, 75)},

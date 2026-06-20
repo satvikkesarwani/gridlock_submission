@@ -15,6 +15,7 @@
 @import "./components/corridor-ribbon.css";
 @import "./components/charts.css";
 @import "./components/maps.css";
+@import "./components/intelligence.css";
 
 @import "./pages/landing.css";
 @import "./pages/simulator.css";

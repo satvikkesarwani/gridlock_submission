@@ -96,3 +96,161 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
+
+/* ---- Interactive simulator inputs (dropdown / number / venue) ---------- */
+/* Inherit the look of `.input-row strong` so live inputs match static values. */
+.row-select,
+.row-input {
+  display: block;
+  width: 100%;
+  margin-top: 2px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 15px;
+  line-height: var(--lh-snug);
+  font-weight: 600;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.row-select:focus,
+.row-input:focus {
+  outline: none;
+}
+
+.row-input::placeholder {
+  color: var(--faint);
+  font-weight: 500;
+}
+
+/* Hide spin buttons on the attendance number field. */
+.row-input[type="number"]::-webkit-inner-spin-button,
+.row-input[type="number"]::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+/* ---- Time window (start–end clock inputs) ------------------------------ */
+.time-range {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  margin-top: 2px;
+}
+
+.time-input {
+  width: auto;
+  margin-top: 0;
+  cursor: pointer;
+}
+
+/* Tint the native clock picker indicator to the brand accent. */
+.time-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.55;
+  filter: invert(45%) sepia(82%) saturate(380%) hue-rotate(130deg);
+}
+
+.time-dash {
+  color: var(--faint);
+  font-weight: 600;
+}
+
+/* ---- Venue picker (Uber-like search + inline map) ---------------------- */
+.venue-row {
+  align-items: start;
+}
+
+.venue-picker {
+  position: relative;
+  min-width: 0;
+  padding-top: 8px;
+}
+
+.venue-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+}
+
+.venue-locate-btn {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: var(--r-sm);
+  color: var(--accent);
+  background: var(--accent-weak);
+  cursor: pointer;
+  transition: background var(--dur-2) var(--ease-out);
+}
+
+.venue-locate-btn:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.venue-selected {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: var(--t-xs);
+  font-weight: 500;
+}
+
+.venue-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  margin: 6px 0 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  box-shadow: var(--e2);
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.venue-suggestion {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: 8px 10px;
+  border-radius: var(--r-sm);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: var(--lh-snug);
+  cursor: pointer;
+}
+
+.venue-suggestion svg {
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+.venue-suggestion:hover {
+  background: var(--surface-2);
+}
+
+.venue-status {
+  padding: 8px 10px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.venue-mini-map {
+  height: 160px;
+  margin-top: var(--s3);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  border: 1px solid var(--hairline);
+}

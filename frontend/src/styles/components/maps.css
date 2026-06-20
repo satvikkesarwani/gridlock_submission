@@ -311,3 +311,30 @@
   font-size: 9px;
   background: rgba(255, 255, 255, 0.8) !important;
 }
+
+/* ---- Geo congestion projection (simulator) ----------------------------- */
+.geo-congestion-map {
+  position: relative;
+}
+
+/* Legend pinned to the top so it doesn't cover the OSM attribution. */
+.geo-legend {
+  top: 8px;
+  bottom: auto;
+  z-index: 500;
+}
+
+.leaflet-tooltip.geo-seg-tooltip {
+  padding: 3px 7px;
+  border: 0;
+  border-radius: var(--r-sm);
+  box-shadow: var(--e0);
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.leaflet-tooltip.geo-seg-tooltip::before {
+  display: none; /* hide the default tooltip arrow for a cleaner chip look */
+}

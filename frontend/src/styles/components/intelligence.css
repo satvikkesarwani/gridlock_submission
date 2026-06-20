@@ -1,0 +1,332 @@
+/* ============================================================================
+   Risk intelligence — score badge, briefing, factor breakdown, scenarios
+   ============================================================================ */
+
+/* ---- Risk score badge --------------------------------------------------- */
+.risk-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+}
+
+.risk-gauge {
+  width: 92px;
+  height: 92px;
+  flex-shrink: 0;
+}
+
+.risk-gauge-score {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  fill: var(--ink);
+}
+
+.risk-gauge-of {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  fill: var(--muted);
+}
+
+.risk-badge-meta small {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.risk-level {
+  display: block;
+  margin: 2px 0 4px;
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.risk-badge-meta p {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--t-xs);
+  line-height: var(--lh-snug);
+}
+
+.risk-red { color: var(--severe); }
+.risk-amber { color: var(--moderate); }
+.risk-green { color: var(--clear); }
+
+/* ---- Briefing ----------------------------------------------------------- */
+.briefing-text {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ---- Factor breakdown --------------------------------------------------- */
+.factor-list {
+  list-style: none;
+  margin: var(--s3) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s3);
+}
+
+.factor-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.factor-label {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.factor-points {
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.factor-bar {
+  margin: 5px 0 3px;
+  height: 7px;
+  border-radius: var(--r-pill);
+  background: var(--hairline-2);
+  overflow: hidden;
+}
+
+.factor-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: var(--r-pill);
+  background: linear-gradient(90deg, var(--accent), var(--accent-strong, var(--accent)));
+}
+
+.factor-detail {
+  color: var(--muted);
+  font-size: var(--t-xs);
+}
+
+/* ---- Scenario comparison ------------------------------------------------ */
+.scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s2);
+  margin: var(--s3) 0;
+}
+
+.scenario-col {
+  display: grid;
+  gap: 3px;
+  padding: var(--s3) var(--s2);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
+  text-align: center;
+}
+
+.scenario-col small {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.scenario-att {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.scenario-delay {
+  font-family: var(--font-mono);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.scenario-risk {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.scenario-red { border-color: var(--severe-weak); }
+.scenario-amber { border-color: var(--moderate-weak); }
+.scenario-green { border-color: var(--clear-weak); }
+
+/* ---- Operational deployment timeline ------------------------------------ */
+.ops-timeline {
+  list-style: none;
+  margin: var(--s3) 0 0;
+  padding: 0;
+}
+
+.ops-phase {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: var(--s2);
+  position: relative;
+  padding-bottom: var(--s4);
+}
+
+.ops-phase:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 18px;
+  bottom: 0;
+  width: 2px;
+  background: var(--hairline-2);
+}
+
+.ops-phase-marker {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+}
+
+.ops-phase-marker > span {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-weak);
+}
+
+.ops-phase-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--s2);
+}
+
+.ops-phase-head strong {
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.ops-phase-time {
+  flex-shrink: 0;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.ops-phase-body p {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: var(--lh-snug);
+}
+
+/* ---- Readiness check ---------------------------------------------------- */
+.readiness-banner {
+  margin: var(--s3) 0;
+  padding: 9px 12px;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.readiness-banner.ok {
+  color: var(--clear-ink);
+  background: var(--clear-weak);
+}
+
+.readiness-banner.short {
+  color: var(--severe-ink);
+  background: var(--severe-weak);
+}
+
+.readiness-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s2);
+}
+
+.readiness-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s2);
+  padding: 8px 10px;
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  font-size: 13px;
+}
+
+.readiness-label {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.readiness-nums {
+  margin-left: auto;
+  margin-right: var(--s2);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.readiness-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--severe-ink);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.readiness-ok {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--clear-ink);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ---- Road-closure intervention impact ----------------------------------- */
+.intervention-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s2);
+  margin: var(--s3) 0;
+}
+
+.intervention-col {
+  display: grid;
+  gap: 3px;
+  padding: var(--s3) var(--s2);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
+  text-align: center;
+}
+
+.intervention-col small {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.intervention-col strong {
+  font-family: var(--font-mono);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.intervention-delta.up { border-color: var(--severe-weak); }
+.intervention-delta.up strong { color: var(--severe); }
+.intervention-delta.down { border-color: var(--clear-weak); }
+.intervention-delta.down strong { color: var(--clear); }

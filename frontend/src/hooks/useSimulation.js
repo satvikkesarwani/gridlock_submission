@@ -3,8 +3,8 @@ import { simulate, clearanceRisk } from "../api/eventflow.js";
 import { DEFAULT_SIMULATION_PAYLOAD, RESOURCES_STORAGE_KEY } from "../constants/simulation.js";
 import { event } from "../data/mockData.js";
 
-function buildPayload() {
-  return { ...DEFAULT_SIMULATION_PAYLOAD, attendance: event.attendance };
+function buildPayload(overrides = {}) {
+  return { ...DEFAULT_SIMULATION_PAYLOAD, attendance: event.attendance, ...overrides };
 }
 
 function persistResources(resources) {
@@ -22,17 +22,17 @@ export function useSimulation() {
   const [error, setError] = useState("");
 
   /** Impact estimate + clearance range (Predictive Simulator). */
-  const runSimulation = async () => {
+  const runSimulation = async (overrides) => {
     setIsLoading(true);
     setError("");
     try {
-      const payload = buildPayload();
+      const payload = buildPayload(overrides);
       const [data, range] = await Promise.all([simulate(payload), clearanceRisk(payload)]);
       persistResources(data.resources);
       return { ...data, clearanceRange: range };
     } catch (err) {
       console.error("Simulation failed:", err);
-      setError("Simulation failed. Check backend availability and try again.");
+      setError(`Simulation failed: ${err.message}. Make sure the backend is running on the expected port.`);
       return null;
     } finally {
       setIsLoading(false);
@@ -49,7 +49,7 @@ export function useSimulation() {
       return data.resources;
     } catch (err) {
       console.error("Optimization failed:", err);
-      setError("Optimization failed. Check backend availability and try again.");
+      setError(`Optimization failed: ${err.message}. Make sure the backend is running on the expected port.`);
       return null;
     } finally {
       setIsLoading(false);

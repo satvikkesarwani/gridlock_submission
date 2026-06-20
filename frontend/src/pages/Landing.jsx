@@ -19,6 +19,7 @@ import { CorridorRibbon } from "../components/CorridorRibbon.jsx";
 import MetricCard from "../components/MetricCard.jsx";
 import Pill from "../components/Pill.jsx";
 import { ROUTES } from "../constants/routes.js";
+import { formatEventTime, loadEventType, loadVenue } from "../constants/simulation.js";
 import { activeCorridor, event, landingMetrics } from "../data/mockData.js";
 
 const features = [
@@ -57,6 +58,10 @@ const metricIcons = {
 
 export default function Landing() {
   const navigate = useNavigate();
+  // Mirror the planning page's chosen event type + venue for app-wide consistency.
+  const eventType = loadEventType();
+  const venue = loadVenue();
+  const eventTime = formatEventTime();
 
   return (
     <div className="page landing-page">
@@ -90,16 +95,16 @@ export default function Landing() {
         <div className="event-summary-content">
           <div>
             <small>Event</small>
-            <strong>{event.name}</strong>
+            <strong>{eventType}</strong>
           </div>
           <div>
             <small>Venue</small>
-            <strong>{event.venue}</strong>
+            <strong>{venue.name}</strong>
           </div>
           <div className="summary-row">
             <div>
               <small>Time</small>
-              <strong>{event.displayTime}</strong>
+              <strong>{eventTime}</strong>
             </div>
             <Pill active>{event.status}</Pill>
           </div>

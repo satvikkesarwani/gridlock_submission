@@ -34,9 +34,28 @@ def assert_json_safe(value):
 
 
 def test_root_contract():
-    response = client.get("/")
+    # The welcome payload lives at /api/health; "/" is reserved for serving the
+    # built frontend (SPA catch-all route) in single-app deployments.
+    response = client.get("/api/health")
     assert response.status_code == 200
     assert response.json() == {"message": "Welcome to EventFlow AI API"}
+
+
+def test_explain_contract():
+    response = client.get("/api/explain")
+    assert response.status_code == 200
+    data = response.json()
+    assert_json_safe(data)
+    assert data["status"] == "success"
+    drivers = data["drivers"]
+    assert isinstance(drivers, list) and len(drivers) > 0
+    for d in drivers:
+        assert isinstance(d["factor"], str)
+        assert isinstance(d["importance"], Real)
+        assert 0.0 <= d["importance"] <= 1.0
+    # importances should be sorted descending
+    imps = [d["importance"] for d in drivers]
+    assert imps == sorted(imps, reverse=True)
 
 
 def test_live_status_contract_repeated():

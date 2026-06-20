@@ -32,6 +32,28 @@ button {
   font: inherit;
 }
 
+/* ---- Lazy-route loading fallback ---------------------------------------- */
+.route-fallback {
+  display: grid;
+  place-items: center;
+  min-height: 320px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  animation: route-fallback-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes route-fallback-pulse {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.85; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-fallback { animation: none; }
+}
+
 /* Tabular numerals everywhere data lives */
 .num,
 .metric-card strong,

@@ -1,37 +1,25 @@
 import { MapContainer, TileLayer, Marker, Popup, Circle, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
-
-// Fix for default marker icons in react-leaflet
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
-
-// Custom icon for severe incidents
-const severeIcon = new L.Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
+import { loadVenue } from '../constants/simulation.js';
+import { severeIcon } from './leafletIcons.js';
 
 export default function InteractiveMap() {
-  // Center on M. Chinnaswamy Stadium, Bengaluru
-  const center = [12.9788, 77.5995];
+  // Center on the venue chosen in the simulator (falls back to the default stadium).
+  const venue = loadVenue();
+  const center = [venue.lat, venue.lng];
 
-  // Mock diversion route
+  // Corridor features are drawn as offsets (in degrees) from the chosen centre,
+  // so the GIS overlay follows whatever location the operator picked.
+  const off = (dLat, dLng) => [center[0] + dLat, center[1] + dLng];
   const diversionRoute = [
-    [12.9790, 77.5950],
-    [12.9820, 77.5960],
-    [12.9830, 77.6000],
-    [12.9810, 77.6050],
-    [12.9770, 77.6040]
+    off(0.0002, -0.0045),
+    off(0.0032, -0.0035),
+    off(0.0042, 0.0005),
+    off(0.0022, 0.0055),
+    off(-0.0018, 0.0045),
   ];
+  const barricade1 = off(0.0002, -0.0045);
+  const barricade2 = off(-0.0018, 0.0045);
 
   return (
     <div className="interactive-map-container">
@@ -45,13 +33,13 @@ export default function InteractiveMap() {
         {/* Main Incident Location */}
         <Marker position={center} icon={severeIcon}>
           <Popup>
-            <strong>M. Chinnaswamy Stadium</strong><br/>
+            <strong>{venue.name}</strong><br/>
             High Priority Corridor<br/>
             Severe Congestion
           </Popup>
         </Marker>
 
-        {/* Stadium Buffer Zone */}
+        {/* Incident Buffer Zone */}
         <Circle
           center={center}
           pathOptions={{ fillColor: '#dd4a3e', color: '#dd4a3e', fillOpacity: 0.12, weight: 1.5 }}
@@ -63,12 +51,12 @@ export default function InteractiveMap() {
           positions={diversionRoute}
           pathOptions={{ color: '#1f9d6b', weight: 4, dashArray: '10, 10' }}
         />
-        
+
         {/* Barricade Markers */}
-        <Marker position={[12.9790, 77.5950]}>
+        <Marker position={barricade1}>
           <Popup>Barricade B1</Popup>
         </Marker>
-        <Marker position={[12.9770, 77.6040]}>
+        <Marker position={barricade2}>
           <Popup>Barricade B2</Popup>
         </Marker>
 

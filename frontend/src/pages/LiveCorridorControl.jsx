@@ -30,6 +30,7 @@ import InteractiveMap from "../components/InteractiveMap.jsx";
 import { WS_BASE_URL } from "../config/api.js";
 import Pill from "../components/Pill.jsx";
 import { ROUTES } from "../constants/routes.js";
+import { loadVenue } from "../constants/simulation.js";
 import { activeCorridor, clearanceForecast as initialForecast, liveMetrics as initialMetrics } from "../data/mockData.js";
 
 const metricIcons = [Gauge, Gauge, Siren, RadioTower, AlarmClock, Clock];
@@ -43,6 +44,7 @@ export default function LiveCorridorControl() {
   });
   const [connectionError, setConnectionError] = useState("");
   const [layers, setLayers] = useState({ "Speed Layers": true, CCTV: true, Incidents: true });
+  const venue = loadVenue();
 
   const toggleLayer = (name) => setLayers((prev) => ({ ...prev, [name]: !prev[name] }));
 
@@ -90,7 +92,7 @@ export default function LiveCorridorControl() {
         </header>
         <div className="incident-grid">
           <InfoLine icon={<Siren size={23} />} label="Alert" value="Segment 14 Jam" tone="red" />
-          <InfoLine icon={<MapPin size={23} />} label="Location" value="Whitefield Road / ITI Data Center" />
+          <InfoLine icon={<MapPin size={23} />} label="Location" value={venue.name} />
           <InfoLine icon={<BellRing size={23} />} label="ID" value="FKID000010" />
           <InfoLine icon={<Clock size={23} />} label="Est. Clear Time" value={liveData.estimatedClearance} />
           <InfoLine icon={<Droplets size={23} />} label="Type" value="Waterlogging" tone="blue" />
@@ -103,7 +105,7 @@ export default function LiveCorridorControl() {
         <div className="live-ribbon">
           <CorridorRibbon
             eyebrow="Live Corridor"
-            road={activeCorridor.road}
+            road={venue.name}
             status={activeCorridor.status}
             statusLabel={activeCorridor.statusLabel}
             segments={activeCorridor.segments}

@@ -5,12 +5,13 @@ import ActionButton from "../components/ActionButton.jsx";
 import AppHeader from "../components/AppHeader.jsx";
 import Card from "../components/Card.jsx";
 import MetricCard from "../components/MetricCard.jsx";
-import { DiversionMap } from "../components/MockMap.jsx";
+import InteractiveMap from "../components/InteractiveMap.jsx";
 import Pill from "../components/Pill.jsx";
 import { useSimulation } from "../hooks/useSimulation.js";
-import { RESOURCES_STORAGE_KEY } from "../constants/simulation.js";
+import { RESOURCES_STORAGE_KEY, loadLastSim, loadEventTime, loadEventType, loadVenue } from "../constants/simulation.js";
 import { ROUTES } from "../constants/routes.js";
 import { rosterRows } from "../data/mockData.js";
+import { DeploymentTimeline, ReadinessReport, ExportPlanButton } from "../components/OpsPlan.jsx";
 
 const metricIcons = [ShieldAlert, Wallet, Users, User, Construction];
 const planLayers = ["Barricades", "Signal Control", "Patrol Routes"];
@@ -46,6 +47,23 @@ export default function ResourceOptimizer() {
       }
     }
   }, []);
+
+  // Context for the timeline / readiness / export: the last simulation's event
+  // window + the live (possibly re-optimized) resources shown on this page.
+  const lastSim = loadLastSim();
+  const time = loadEventTime();
+  const planCtx = {
+    eventTypeLabel: lastSim?.eventTypeLabel || loadEventType(),
+    venueName: lastSim?.venueName || loadVenue().name,
+    startTime: lastSim?.startTime || time.start,
+    endTime: lastSim?.endTime || time.end,
+    attendance: lastSim?.attendance ?? 0,
+    delay: lastSim?.delay ?? 0,
+    p50: lastSim?.p50 ?? 30,
+    p90: lastSim?.p90 ?? 0,
+    roadClosure: lastSim?.roadClosure ?? true,
+    resources,
+  };
 
   const optimizerMetrics = [
     { label: "Relief Factor", value: resources.relief_factor },
@@ -108,12 +126,18 @@ export default function ResourceOptimizer() {
             </Pill>
           ))}
         </div>
-        <DiversionMap />
+        <InteractiveMap />
         <div className="summary-strip">
           <div><ShieldAlert size={23} />High-Risk Posts: <strong>3</strong></div>
           <div><Construction size={23} />Diversion Points: <strong>{resources.diversions}</strong></div>
         </div>
       </Card>
+
+      <ReadinessReport resources={resources} />
+
+      <DeploymentTimeline ctx={planCtx} />
+
+      <ExportPlanButton ctx={planCtx} />
 
       <ActionButton className="primary" onClick={() => navigate(ROUTES.liveControl)}>Proceed to Live Corridor Control</ActionButton>
     </div>
